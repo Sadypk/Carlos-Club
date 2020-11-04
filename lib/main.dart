@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/general/view/splashScreen.dart';
+import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:get/get.dart';
 
 main() => runApp(App());
 
 class App extends StatelessWidget {
+  final GetSizeConfig sizeConfig = Get.put(GetSizeConfig());
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainApp(),
+    return GetMaterialApp(
+      home: SplashScreen(),
     );
   }
 }
-class MainApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('oppa')),
-    );
-  }
-}
-
 
 
 
@@ -26,10 +21,10 @@ class MainApp extends StatelessWidget {
 
 
 //model folder
-class User{
-  String name;
-  User({this.name});
-}
+// class User{
+//   String name;
+//   User({this.name});
+// }
 
 
 //repository
