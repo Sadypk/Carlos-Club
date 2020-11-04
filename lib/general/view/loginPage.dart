@@ -6,38 +6,18 @@ import 'package:flutter_app/utils/widgets/blueButton.dart';
 import 'package:flutter_app/utils/widgets/textField.dart';
 import 'package:get/get.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-
+class LoginPage extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.find();
-  double height;
-  double width;
 
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  Function signUpWithGoogle = () {
+  final Function signUpWithGoogle = () {
     print('sign up with google');
   };
-  Function signUpWithFacebook = () {
+  final Function signUpWithFacebook = () {
     print('sign up with facebook');
   };
-
-  @override
-  void initState() {
-    if(mounted){
-      height = sizeConfig.height.value;
-      width = sizeConfig.width.value;
-      super.initState();
-    }else{
-      return ;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +38,14 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget header() {
     return Container(
-      height: height * 300,
+      height: sizeConfig.height * 300,
       // color: Colors.red,
       child: Center(
         child: Text(
           'Sign In',
           style: TextStyle(
-            fontSize: sizeConfig.getSize(34),
-            fontWeight: FontWeight.bold
+              fontSize: sizeConfig.getSize(34),
+              fontWeight: FontWeight.bold
           ),
         ),
       ),
@@ -80,19 +60,19 @@ class _LoginPageState extends State<LoginPage> {
           icon: Icons.email,
           controller: emailController,
         ),
-        SizedBox(height: height * 30,),
+        SizedBox(height: sizeConfig.height * 30,),
         RoundedTextField(
           labelText: 'Password',
           icon: Icons.lock,
           controller: passwordController,
         ),
-        SizedBox(height: height * 60,),
+        SizedBox(height: sizeConfig.height * 60,),
         BlueButton(
-          text: 'Login',
-          onTap: (){
-            print(emailController.text);
-            print(passwordController.text);
-          }
+            text: 'Login',
+            onTap: (){
+              print(emailController.text);
+              print(passwordController.text);
+            }
         )
       ],
     );
@@ -100,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget signUpMethods() {
     return Container(
-      height: height * 250,
+      height: sizeConfig.height * 250,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -114,19 +94,19 @@ class _LoginPageState extends State<LoginPage> {
   Widget footer() {
     return RichText(
       text: TextSpan(
-        text: 'Don\'t have an account?',
-        style: TextStyle(
-          color: Colors.black
-        ),
-        children: [
-          TextSpan(
-            recognizer: TapGestureRecognizer()..onTap = () => Get.to(RegisterPage()),
-            text: 'Sign up',
-            style: TextStyle(
-              fontWeight: FontWeight.bold
+          text: 'Don\'t have an account?',
+          style: TextStyle(
+              color: Colors.black
+          ),
+          children: [
+            TextSpan(
+                recognizer: TapGestureRecognizer()..onTap = () => Get.to(RegisterPage()),
+                text: 'Sign up',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold
+                )
             )
-          )
-        ]
+          ]
       ),
     );
   }
@@ -138,12 +118,12 @@ class _LoginPageState extends State<LoginPage> {
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(111)),
         child: Padding(
-          padding: EdgeInsets.all(sizeConfig.getSize(4)),
-          child: CircleAvatar(
-            backgroundImage: AssetImage(image),
-            backgroundColor: Colors.transparent,
-            radius: sizeConfig.getSize(30),
-          )
+            padding: EdgeInsets.all(sizeConfig.getSize(4)),
+            child: CircleAvatar(
+              backgroundImage: AssetImage(image),
+              backgroundColor: Colors.transparent,
+              radius: sizeConfig.getSize(30),
+            )
         ),
       ),
     );
