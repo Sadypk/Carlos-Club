@@ -10,7 +10,6 @@ class App extends StatelessWidget {
     );
   }
 }
-
 class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
