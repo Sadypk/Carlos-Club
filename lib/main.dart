@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/general/view/splashScreen.dart';
+import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: AppConst.magenta
+      ),
       home: SplashScreen(),
     );
   }

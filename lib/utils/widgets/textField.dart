@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
@@ -7,10 +8,12 @@ class RoundedTextField extends StatelessWidget {
   final String labelText;
   final IconData icon;
   final TextEditingController controller;
+  final FocusNode focusNode;
   RoundedTextField({
     @required this.labelText,
     @required this.icon,
-    @required this.controller
+    @required this.controller,
+    @required this.focusNode
 });
   @override
   Widget build(BuildContext context) {
@@ -19,14 +22,24 @@ class RoundedTextField extends StatelessWidget {
       width: sizeConfig.width * 800,
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         style: TextStyle(
           color: Color(0xff4D4F56)
         ),
         decoration: InputDecoration(
           labelText: labelText,
+          labelStyle: TextStyle(
+            color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey
+          ),
           prefixIcon: Icon(
             icon,
-            color: Color(0xff4D4F56),
+            color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(111),
+            borderSide: BorderSide(
+              color: AppConst.green
+            )
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(111)

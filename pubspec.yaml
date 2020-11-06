@@ -30,6 +30,13 @@ dependencies:
   cupertino_icons: ^1.0.0
   get: ^3.13.0
   cached_network_image: ^2.3.3
+  qr_code_scanner: ^0.0.13
+  awesome_dialog: ^1.2.1
+  intl:
+  calendar_flutter: ^1.1.5
+  table_calendar: ^2.3.0
+  marquee: ^1.6.1
+
 
 dev_dependencies:
   flutter_test:

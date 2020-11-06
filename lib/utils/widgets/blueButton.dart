@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
@@ -18,7 +19,7 @@ class BlueButton extends StatelessWidget {
         height: sizeConfig.getSize(60),
         width: sizeConfig.width * 500,
         decoration: BoxDecoration(
-          color: Color(0xff10ADFF),
+          color: AppConst.blue,
           borderRadius: BorderRadius.circular(111)
         ),
         child: Center(
