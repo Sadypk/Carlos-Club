@@ -9,11 +9,13 @@ class RoundedTextField extends StatelessWidget {
   final IconData icon;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final bool obscureText;
   RoundedTextField({
     @required this.labelText,
     @required this.icon,
     @required this.controller,
-    @required this.focusNode
+    @required this.focusNode,
+    this.obscureText = false
 });
   @override
   Widget build(BuildContext context) {
@@ -21,6 +23,7 @@ class RoundedTextField extends StatelessWidget {
       height: sizeConfig.getSize(60),
       width: sizeConfig.width * 800,
       child: TextField(
+        obscureText: obscureText,
         controller: controller,
         focusNode: focusNode,
         style: TextStyle(

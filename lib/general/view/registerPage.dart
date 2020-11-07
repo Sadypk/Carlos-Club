@@ -93,6 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
           labelText: RegisterPageViewModel.textFieldHintPassword,
           icon: Icons.lock_outline,
           controller: passwordController,
+          obscureText: true,
         ),
         SizedBox(height: sizeConfig.height * 30,),
         RoundedTextField(
@@ -100,6 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
           labelText: RegisterPageViewModel.textFieldHintConfirmPassword,
           icon: Icons.lock_outline,
           controller: confPasswordController,
+          obscureText: true,
         ),
         SizedBox(height: sizeConfig.height * 60,),
         BlueButton(

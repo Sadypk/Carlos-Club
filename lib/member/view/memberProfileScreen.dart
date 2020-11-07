@@ -161,7 +161,7 @@ class MemberProfileScreen extends StatelessWidget {
                         color: AppConst.chocolate,
                       ),
                       prefixIcon: Icon(
-                        Icons.location_city,
+                        Icons.location_pin,
                         size: sizeConfig.getSize(30),
                         color: AppConst.chocolate,
                       ),

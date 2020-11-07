@@ -89,16 +89,17 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(height: sizeConfig.height * 30,),
         RoundedTextField(
           focusNode: passwordNode,
-          labelText: LoginPageViewModel.textFieldHintEmail,
+          labelText: LoginPageViewModel.textFieldHintPassword,
           icon: Icons.lock,
           controller: passwordController,
+          obscureText: true
         ),
         SizedBox(height: sizeConfig.height * 20,),
         rememberMe(),
         SizedBox(height: sizeConfig.height * 20,),
         BlueButton(
             text: LoginPageViewModel.btnLogin,
-            onTap: (){}
+            onTap: (){Get.offAll(MemberHomeScreen());}
         )
       ],
     );
