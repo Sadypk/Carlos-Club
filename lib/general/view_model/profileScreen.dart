@@ -1,4 +1,4 @@
-class MemberProfilePageViewModel{
+class ProfileScreenRepo{
   static const String firstName = "Samantha";
   static const String lastName = "Claire";
   static const String checkIn = "Check-In's";

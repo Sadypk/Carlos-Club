@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/general/view/calenderView.dart';
 import 'package:flutter_app/general/view/qrScanner.dart';
 import 'package:flutter_app/member/models/demos.dart';
+import 'package:flutter_app/member/view/memberCheckInHistory.dart';
 import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
@@ -12,14 +13,12 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:marquee/marquee.dart';
 
-import 'memberCheckInHistory.dart';
-
-class HomeBody extends StatefulWidget {
+class AdminHomeBody extends StatefulWidget {
   @override
-  _HomeBodyState createState() => _HomeBodyState();
+  _AdminHomeBodyState createState() => _AdminHomeBodyState();
 }
 
-class _HomeBodyState extends State<HomeBody> {
+class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
 
   @override
@@ -74,7 +73,7 @@ class _HomeBodyState extends State<HomeBody> {
                 PopupMenuItem(
                   value: true,
                   child: Text(
-                    'Logout'
+                      'Logout'
                   ),
                 )
               ];
@@ -248,6 +247,103 @@ class _HomeBodyState extends State<HomeBody> {
         ],
       ),
     );
+  }
+
+  void manualCheckIn() {
+    String selectedDate;
+    String selectedTime;
+    AwesomeDialog(
+        context: context,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.TOPSLIDE,
+        body: StatefulBuilder(
+          builder: (BuildContext context, void Function(void Function()) setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // RoundedTextField(
+                //   labelText: 'User email',
+                //   icon: Icons.email_outlined,
+                //   controller: manualEmailCheckInController,
+                //   focusNode: focusNode
+                // ),
+                Container(
+                  height: sizeConfig.height * 80,
+                  padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30),
+                  child: Row(
+                    children: [
+                      Text(
+                        MemberHomeScreenViewModel.manualCheckInChooseDate,
+                        style: TextStyle(
+                          fontSize: sizeConfig.getSize(18),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async{
+                          selectedDate = await selectDate();
+                          if(selectedDate != null){
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          height: sizeConfig.height * 60,
+                          width: sizeConfig.width * 350,
+                          color: selectedDate == null ? Colors.grey[300] : Colors.transparent,
+                          child: Center(
+                            child: Text(
+                              selectedDate ?? 'dd / MM',
+                              style: TextStyle(
+                                fontSize: sizeConfig.getSize(18),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  height: sizeConfig.height * 80,
+                  padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30),
+                  child: Row(
+                    children: [
+                      Text(
+                        MemberHomeScreenViewModel.manualCheckInChooseTime,
+                        style: TextStyle(
+                          fontSize: sizeConfig.getSize(18),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async{
+                          selectedTime = await selectTime();
+                          if(selectedTime != null){
+                            setState((){});
+                          }
+                        },
+                        child: Container(
+                          height: sizeConfig.height * 60,
+                          width: sizeConfig.width * 350,
+                          color: selectedTime == null ? Colors.grey[300] : Colors.transparent,
+                          child: Center(
+                            child: Text(
+                              selectedTime ?? 'hh : mm',
+                              style: TextStyle(
+                                fontSize: sizeConfig.getSize(18),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        btnOkOnPress: checkInSuccessFull,
+        btnCancelOnPress: (){}
+    )..show();
   }
 
   void showCalenderZView() {

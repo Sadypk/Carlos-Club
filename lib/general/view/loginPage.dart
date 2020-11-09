@@ -5,6 +5,7 @@ import 'package:flutter_app/general/view/registerPage.dart';
 import 'package:flutter_app/general/view_model/loginPage.dart';
 import 'package:flutter_app/member/view/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
+import 'package:flutter_app/utils/getControllers/userType.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:flutter_app/utils/widgets/blueButton.dart';
 import 'package:flutter_app/utils/widgets/textField.dart';
@@ -23,10 +24,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   final Function signUpWithGoogle = () {
+
+    GetUserType userType = Get.find();
+    userType.setType(UserType.normal);
     Get.offAll(MemberHomeScreen());
   };
 
   final Function signUpWithFacebook = () {
+    GetUserType userType = Get.find();
+    userType.setType(UserType.admin);
     Get.offAll(AdminHomeScreen());
   };
 

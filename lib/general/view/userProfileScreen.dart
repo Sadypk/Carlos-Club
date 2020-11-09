@@ -1,15 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/general/view/calenderView.dart';
+import 'package:flutter_app/general/view_model/profileScreen.dart';
 import 'package:flutter_app/member/view/memberCheckInHistory.dart';
 import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
-import 'package:flutter_app/member/view_model/memberProfilePage.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
-class MemberProfileScreen extends StatelessWidget {
+import 'calenderView.dart';
+
+
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
   @override
   Widget build(BuildContext context) {
@@ -28,12 +34,12 @@ class MemberProfileScreen extends StatelessWidget {
                     clipper: MyClip(),
                     child: Container(
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                            MemberHomeScreenViewModel.profilePic
-                          ),
-                          fit: BoxFit.cover
-                        )
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                  MemberHomeScreenViewModel.profilePic
+                              ),
+                              fit: BoxFit.cover
+                          )
                       ),
                     ),
                   ),
@@ -52,7 +58,7 @@ class MemberProfileScreen extends StatelessWidget {
                       child: CircleAvatar(
                         radius: sizeConfig.getSize(60),
                         backgroundImage: CachedNetworkImageProvider(
-                          MemberHomeScreenViewModel.profilePic
+                            MemberHomeScreenViewModel.profilePic
                         ),
                       ),
                     ),
@@ -62,7 +68,7 @@ class MemberProfileScreen extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.symmetric(
-                horizontal: sizeConfig.width * 35
+                  horizontal: sizeConfig.width * 35
               ),
               child: Column(
                 children: [
@@ -71,7 +77,7 @@ class MemberProfileScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          MemberProfilePageViewModel.firstName + '\n' + MemberProfilePageViewModel.lastName,
+                          ProfileScreenRepo.firstName + '\n' + ProfileScreenRepo.lastName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: sizeConfig.getSize(22),
@@ -99,7 +105,7 @@ class MemberProfileScreen extends StatelessWidget {
                                       },
                                       color: Colors.grey[300],
                                       child: Text(
-                                        'View all'
+                                          'View all'
                                       ),
                                       height: sizeConfig.height * 70,
                                       minWidth: sizeConfig.width * 300,
@@ -112,7 +118,7 @@ class MemberProfileScreen extends StatelessWidget {
                                       },
                                       color: Colors.grey[300],
                                       child: Text(
-                                        'View calender'
+                                          'View calender'
                                       ),
                                       height: sizeConfig.height * 70,
                                       minWidth: sizeConfig.width * 300,
@@ -135,10 +141,10 @@ class MemberProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                MemberProfilePageViewModel.checkIn,
-                                style: TextStyle(
-                                  fontSize: sizeConfig.getSize(18)
-                                )
+                                  ProfileScreenRepo.checkIn,
+                                  style: TextStyle(
+                                      fontSize: sizeConfig.getSize(18)
+                                  )
                               ),
                             ],
                           ),
@@ -156,18 +162,18 @@ class MemberProfileScreen extends StatelessWidget {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                      hintText: MemberProfilePageViewModel.address,
-                      hintStyle: TextStyle(
-                        color: AppConst.chocolate,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.location_pin,
-                        size: sizeConfig.getSize(30),
-                        color: AppConst.chocolate,
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none
-                      )
+                        hintText: ProfileScreenRepo.address,
+                        hintStyle: TextStyle(
+                          color: AppConst.chocolate,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.location_pin,
+                          size: sizeConfig.getSize(30),
+                          color: AppConst.chocolate,
+                        ),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none
+                        )
                     ),
                   ),
                   TextField(
@@ -175,18 +181,18 @@ class MemberProfileScreen extends StatelessWidget {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                      hintText: MemberProfilePageViewModel.email,
-                      hintStyle: TextStyle(
-                        color: AppConst.chocolate,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.email_outlined,
-                        size: sizeConfig.getSize(30),
-                        color: AppConst.chocolate,
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none
-                      )
+                        hintText: ProfileScreenRepo.email,
+                        hintStyle: TextStyle(
+                          color: AppConst.chocolate,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          size: sizeConfig.getSize(30),
+                          color: AppConst.chocolate,
+                        ),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none
+                        )
                     ),
                   ),
                   TextField(
@@ -194,18 +200,18 @@ class MemberProfileScreen extends StatelessWidget {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                      hintText: MemberProfilePageViewModel.phone,
-                      hintStyle: TextStyle(
-                        color: AppConst.chocolate,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.phone_iphone_outlined,
-                        size: sizeConfig.getSize(30),
-                        color: AppConst.chocolate,
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none
-                      )
+                        hintText: ProfileScreenRepo.phone,
+                        hintStyle: TextStyle(
+                          color: AppConst.chocolate,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.phone_iphone_outlined,
+                          size: sizeConfig.getSize(30),
+                          color: AppConst.chocolate,
+                        ),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none
+                        )
                     ),
                   ),
                   Row(
@@ -216,18 +222,18 @@ class MemberProfileScreen extends StatelessWidget {
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                            hintText: MemberProfilePageViewModel.facebook,
-                            hintStyle: TextStyle(
-                              color: AppConst.chocolate,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.api,
-                              size: sizeConfig.getSize(30),
-                              color: AppConst.chocolate,
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none
-                            )
+                              hintText: ProfileScreenRepo.facebook,
+                              hintStyle: TextStyle(
+                                color: AppConst.chocolate,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.api,
+                                size: sizeConfig.getSize(30),
+                                color: AppConst.chocolate,
+                              ),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none
+                              )
                           ),
                         ),
                       ),
@@ -237,18 +243,18 @@ class MemberProfileScreen extends StatelessWidget {
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                            hintText: MemberProfilePageViewModel.instagram,
-                            hintStyle: TextStyle(
-                              color: AppConst.chocolate,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.api,
-                              size: sizeConfig.getSize(30),
-                              color: AppConst.chocolate,
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none
-                            )
+                              hintText: ProfileScreenRepo.instagram,
+                              hintStyle: TextStyle(
+                                color: AppConst.chocolate,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.api,
+                                size: sizeConfig.getSize(30),
+                                color: AppConst.chocolate,
+                              ),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none
+                              )
                           ),
                         ),
                       ),
@@ -280,5 +286,4 @@ class MyClip extends CustomClipper<Path>{
 
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
-
 }

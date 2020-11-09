@@ -1,6 +1,6 @@
 class MemberHomeScreenViewModel{
   static const String appBarText = 'User Screen';
-  static const String btnScanQr = 'Scan QR Code';
+  static const String btnScanQr = 'Check In';
   static const String btnManualCheckIn = 'Manual Check-In';
   static const String attendenceHeader = 'Check-in History';
   static const String btnSeeAll = 'See all';

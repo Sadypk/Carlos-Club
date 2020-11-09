@@ -36,6 +36,7 @@ dependencies:
   calendar_flutter: ^1.1.5
   table_calendar: ^2.3.0
   marquee: ^1.6.1
+  connectivity: ^2.0.1
 
 
 dev_dependencies:

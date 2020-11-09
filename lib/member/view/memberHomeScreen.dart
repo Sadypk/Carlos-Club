@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/member/view/memberProfileScreen.dart';
+import 'package:flutter_app/general/view/userProfileScreen.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
-
-import 'groupMembers.dart';
 import 'homeBody.dart';
 
 class MemberHomeScreen extends StatefulWidget {
@@ -16,7 +14,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
 
   final GetSizeConfig sizeConfig = Get.find();
 
-  final List<Widget> _pages = [HomeBody(), GroupMembers(), MemberProfileScreen()];
+  final List<Widget> _pages = [HomeBody(),ProfileScreen()];
 
   int index = 0;
 
@@ -40,12 +38,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
               Icons.home
             ),
             label: 'Home'
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.group
-            ),
-            label: 'Group'
           ),
           BottomNavigationBarItem(
             icon: Icon(

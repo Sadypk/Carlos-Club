@@ -14,29 +14,31 @@ class CalenderView extends StatelessWidget {
     return TableCalendar(
       calendarController: controller,
       onDaySelected: (date,event,c){
-        Get.dialog(Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${DateFormat('dd MMM').format(date)}',
-                  style: TextStyle(
-                      fontSize: sizeConfig.getSize(22)
+        if(event.length > 0){
+          Get.dialog(Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${DateFormat('dd MMM').format(date)}',
+                    style: TextStyle(
+                        fontSize: sizeConfig.getSize(22)
+                    ),
                   ),
-                ),
-                SizedBox(height: sizeConfig.height * 20,),
-                Text(
-                  'Checked In at ${event[0]}',
-                  style: TextStyle(
-                    fontSize: sizeConfig.getSize(20)
+                  SizedBox(height: sizeConfig.height * 20,),
+                  Text(
+                    'Checked In at ${event[0]}',
+                    style: TextStyle(
+                        fontSize: sizeConfig.getSize(20)
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ));
+          ));
+        }
       },
       calendarStyle: CalendarStyle(
         markersColor: Colors.green,

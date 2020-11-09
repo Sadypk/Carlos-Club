@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/general/view/splashScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
+import 'package:flutter_app/utils/getControllers/userType.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +9,7 @@ main() => runApp(App());
 
 class App extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.put(GetSizeConfig());
+  final GetUserType userType = Get.put(GetUserType());
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
