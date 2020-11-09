@@ -18,50 +18,84 @@ class GroupMembers extends StatefulWidget {
   _GroupMembersState createState() => _GroupMembersState();
 }
 
-class _GroupMembersState extends State<GroupMembers> {
+class _GroupMembersState extends State<GroupMembers> with SingleTickerProviderStateMixin{
   final GetSizeConfig sizeConfig = Get.find();
 
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
+  TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(vsync: this, length: 2);
+    tabController.addListener(() {setState(() {});});
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Group name',
-            style: TextStyle(
-                fontSize: sizeConfig.getSize(22),
-                fontWeight: FontWeight.bold
-            ),
-          ),
-          bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
-            labelStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: sizeConfig.getSize(18)
-            ),
-            unselectedLabelStyle: TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: sizeConfig.getSize(18)
-            ),
-            indicatorColor: Colors.red,
-            indicatorWeight: 6,
-            tabs: [
-              Tab(text: GroupPageRepo.tab1),
-              Tab(text: GroupPageRepo.tab2),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Group name',
+          style: TextStyle(
+              fontSize: sizeConfig.getSize(22),
+              fontWeight: FontWeight.bold
           ),
         ),
-        body: TabBarView(
-          children: [
-            groupInfoTab(),
-            membersTab(),
+        actions: [
+          tabController.index == 1 ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
+              onPressed: (){
+                //TODO add memer
+              },
+              color: Colors.grey[700],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: sizeConfig.width * 10,),
+                  Text(
+                    'Add member',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ) : SizedBox()
+        ],
+        bottom: TabBar(
+          controller: tabController,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.black,
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: sizeConfig.getSize(18)
+          ),
+          unselectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: sizeConfig.getSize(18)
+          ),
+          indicatorColor: Colors.red,
+          indicatorWeight: 6,
+          tabs: [
+            Tab(text: GroupPageRepo.tab1),
+            Tab(text: GroupPageRepo.tab2),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          groupInfoTab(),
+          membersTab(),
+        ],
       ),
     );
   }

@@ -74,29 +74,40 @@ class AbsentAndPresentListScreen extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
+        contentPadding: EdgeInsets.all(8),
         onTap: (){},
         leading: CircleAvatar(
+          radius: sizeConfig.getSize(30),
           backgroundImage: CachedNetworkImageProvider(
             data.image
           ),
         ),
-        title: RichText(
-          text: TextSpan(
-              text: data.fName,
-              style: TextStyle(
-                  color: Colors.black,
-                fontSize: sizeConfig.getSize(16),
-                fontWeight: FontWeight.normal
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                  text: data.fName,
+                  style: TextStyle(
+                      color: Colors.black,
+                    fontSize: sizeConfig.getSize(18),
+                    fontWeight: FontWeight.normal
+                  ),
+                  children: [
+                    TextSpan(
+                        text: ' ',
+                    ),
+                    TextSpan(
+                        text: data.lName,
+                    )
+                  ]
               ),
-              children: [
-                TextSpan(
-                    text: ' ',
-                ),
-                TextSpan(
-                    text: data.lName,
-                )
-              ]
-          ),
+            ),
+            data.admin ? Text(
+              'Admin',
+              style: TextStyle(color: Colors.red),
+            ) : SizedBox()
+          ],
         ),
         trailing: IconButton(
           onPressed: (){},
