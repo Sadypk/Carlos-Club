@@ -1,16 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/splashScreen.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
+import 'package:flutter_app/general/view/splashScreen.dart';
+import 'package:flutter_app/utils/appConst.dart';
+import 'package:flutter_app/utils/getControllers/authController.dart';
+import 'package:flutter_app/utils/getControllers/userType.dart';
+import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
 
-import 'authentication/models/userType.dart';
-import 'main_app/resources/sizeConfig.dart';
-
-main() => runApp(App());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(App());
+}
 
 class App extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.put(GetSizeConfig());
   final GetUserType userType = Get.put(GetUserType());
+  final AuthController authController = Get.put(AuthController());
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/authentication/view/loginPage.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/utils/getControllers/authController.dart';
 import 'package:get/get.dart';
 
+import '../sizeConfig.dart';
 
 class LogoutDialog extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.find();
+
+  final AuthController authController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -55,7 +57,10 @@ class LogoutDialog extends StatelessWidget {
                 ),
                 Expanded(
                   child: InkWell(
-                    onTap: () => Get.offAll(LoginPage()),
+                   // onTap: () => Get.offAll(LoginPage()),
+                    onTap: (){
+                      authController.signOut();
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                           border: Border(

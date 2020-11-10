@@ -1,15 +1,12 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
-import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/users/view/screens/members/memberCheckInHistory.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
+import 'package:flutter_app/general/view_model/profileScreen.dart';
+import 'package:flutter_app/member/view/memberCheckInHistory.dart';
+import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
+import 'package:flutter_app/utils/appConst.dart';
+import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-
-import '../widgets/calenderView.dart';
-
+import 'calenderView.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -18,57 +15,10 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
-  bool edit = false;
-  File image;
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-
-  _handleSave(){
-    var data = {
-      'address': addressController.text,
-    };
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FlatButton(
-              onPressed: (){
-                setState(() {
-                  edit = !edit;
-                });
-              },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
-              color: Colors.grey[400],
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    edit ? Icons.save : Icons.edit,
-                    color: Colors.white,
-                    size: sizeConfig.getSize(20),
-                  ),
-                  SizedBox(width: sizeConfig.width * 10,),
-                  Text(
-                    edit ? 'Save' : 'Edit',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: sizeConfig.getSize(18)
-                    ),
-                  )
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
+      appBar: AppBar(backgroundColor: Colors.transparent,elevation: 0,),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
@@ -84,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  StringResources.memberHomeScreenProfilePic
+                                  MemberHomeScreenViewModel.profilePic
                               ),
                               fit: BoxFit.cover
                           )
@@ -103,30 +53,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: CircleAvatar(
                       radius: sizeConfig.getSize(65),
                       backgroundColor: Colors.white,
-                      child: Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: sizeConfig.getSize(60),
-                            backgroundImage: CachedNetworkImageProvider(
-                                StringResources.memberHomeScreenProfilePic
-                            ),
-                          ),
-                          if (edit) Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: selectPic,
-                              child: CircleAvatar(
-                                radius: sizeConfig.getSize(20),
-                                backgroundColor: Colors.white60,
-                                child: Icon(
-                                  Icons.camera
-                                ),
-                              ),
-                            ),
-                          ) else SizedBox(),
-                        ],
+                      child: CircleAvatar(
+                        radius: sizeConfig.getSize(60),
+                        backgroundImage: CachedNetworkImageProvider(
+                            MemberHomeScreenViewModel.profilePic
+                        ),
                       ),
                     ),
                   )
@@ -144,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          StringResources.firstName + '\n' + StringResources.lastName,
+                          ProfileScreenRepo.firstName + '\n' + ProfileScreenRepo.lastName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: sizeConfig.getSize(22),
@@ -208,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                  StringResources.checkIn,
+                                  ProfileScreenRepo.checkIn,
                                   style: TextStyle(
                                       fontSize: sizeConfig.getSize(18)
                                   )
@@ -225,11 +156,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: sizeConfig.height * 30,
                   ),
                   TextField(
-                    enabled: edit,
+                    enabled: false,
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: StringResources.address,
+                        hintText: ProfileScreenRepo.address,
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -248,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: StringResources.email,
+                        hintText: ProfileScreenRepo.email,
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -263,11 +194,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   TextField(
-                    enabled: edit,
+                    enabled: false,
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: StringResources.phone,
+                        hintText: ProfileScreenRepo.phone,
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -285,11 +216,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: TextField(
-                          enabled: edit,
+                          enabled: false,
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                              hintText: StringResources.facebook,
+                              hintText: ProfileScreenRepo.facebook,
                               hintStyle: TextStyle(
                                 color: AppConst.chocolate,
                               ),
@@ -306,11 +237,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Expanded(
                         child: TextField(
-                          enabled: edit,
+                          enabled: false,
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                              hintText: StringResources.instagram,
+                              hintText: ProfileScreenRepo.instagram,
                               hintStyle: TextStyle(
                                 color: AppConst.chocolate,
                               ),
@@ -334,30 +265,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
-  }
-
-
-
-
-
-
-
-
-
-  void selectPic() async{
-    final picker = ImagePicker();
-    try{
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      setState(() {
-        if (pickedFile != null) {
-          image = File(pickedFile.path);
-        } else {
-          print('No image selected.');
-        }
-      });
-    }catch(e){
-      print(e.toString());
-    }
   }
 }
 

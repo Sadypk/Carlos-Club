@@ -1,14 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/authentication/models/userType.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
-import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/users/view/screens/admin/adminHomeScreen.dart';
-import 'package:flutter_app/authentication/view/registerPage.dart';
-import 'package:flutter_app/users/view/screens/members/memberHomeScreen.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
-import 'package:flutter_app/main_app/widgets/blueButton.dart';
-import 'package:flutter_app/main_app/widgets/textField.dart';
+import 'package:flutter_app/admin/view/adminHomeScreen.dart';
+import 'package:flutter_app/general/view/registerPage.dart';
+import 'package:flutter_app/general/view_model/loginPage.dart';
+import 'package:flutter_app/member/view/memberHomeScreen.dart';
+import 'package:flutter_app/utils/appConst.dart';
+import 'package:flutter_app/utils/getControllers/authController.dart';
+import 'package:flutter_app/utils/getControllers/userType.dart';
+import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:flutter_app/utils/widgets/blueButton.dart';
+import 'package:flutter_app/utils/widgets/textField.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,8 +24,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController passwordController = TextEditingController();
 
-  final Function signUpWithGoogle = () {
+  AuthController authController = Get.find();
 
+  final Function signUpWithGoogle = () {
     GetUserType userType = Get.find();
     userType.setType(UserType.normal);
     Get.offAll(MemberHomeScreen());
@@ -73,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
       // color: Colors.red,
       child: Center(
         child: Text(
-          StringResources.loginHeaderText,
+          LoginPageViewModel.headerText,
           style: TextStyle(
               fontSize: sizeConfig.getSize(34),
               fontWeight: FontWeight.bold
@@ -88,14 +90,14 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         RoundedTextField(
           focusNode: emailNode,
-          labelText: StringResources.loginTextFieldHintEmail,
+          labelText: LoginPageViewModel.textFieldHintEmail,
           icon: Icons.email,
           controller: emailController,
         ),
         SizedBox(height: sizeConfig.height * 30,),
         RoundedTextField(
           focusNode: passwordNode,
-          labelText: StringResources.loginTextFieldHintPassword,
+          labelText: LoginPageViewModel.textFieldHintPassword,
           icon: Icons.lock,
           controller: passwordController,
           obscureText: true
@@ -104,8 +106,13 @@ class _LoginPageState extends State<LoginPage> {
         rememberMe(),
         SizedBox(height: sizeConfig.height * 20,),
         BlueButton(
-            text: StringResources.loginBtnLogin,
-            onTap: (){Get.offAll(MemberHomeScreen());}
+            text: LoginPageViewModel.btnLogin,
+            onTap: (){
+              if(emailController.text.isNotEmpty && passwordController.text.isNotEmpty){
+                authController.login(emailController.text, passwordController.text);
+              }
+              //login as member by default
+            }
         )
       ],
     );
@@ -162,8 +169,8 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          signUpMethod(StringResources.loginImgSignInWithGoogle, signUpWithGoogle),
-          signUpMethod(StringResources.loginImgSignInWithFacebook, signUpWithFacebook),
+          signUpMethod(LoginPageViewModel.imgSignInWithGoogle, signUpWithGoogle),
+          signUpMethod(LoginPageViewModel.imgSignInWithFacebook, signUpWithFacebook),
         ],
       ),
     );
@@ -172,14 +179,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget footer() {
     return RichText(
       text: TextSpan(
-          text: StringResources.loginFooterTextNormal,
+          text: LoginPageViewModel.footerTextNormal,
           style: TextStyle(
               color: Colors.black
           ),
           children: [
             TextSpan(
                 recognizer: TapGestureRecognizer()..onTap = () => Get.to(RegisterPage()),
-                text: StringResources.loginFooterTextBold,
+                text: LoginPageViewModel.footerTextBold,
                 style: TextStyle(
                     fontWeight: FontWeight.bold
                 )
