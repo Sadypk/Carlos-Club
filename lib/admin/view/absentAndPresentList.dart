@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/member/models/demos.dart';
@@ -21,6 +22,34 @@ class AbsentAndPresentListScreen extends StatelessWidget {
             ),
           ),
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FlatButton(
+                onPressed: (){
+                  AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.WARNING,
+                    animType: AnimType.TOPSLIDE,
+                    title: 'Confirm!!',
+                    desc: 'Do you want to print a report of ${Get.arguments} ?',
+                    btnOkOnPress: (){},
+                    btnCancelOnPress: (){}
+                  )..show();
+                },
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Text(
+                      'Print'
+                    ),
+                    SizedBox(width: sizeConfig.width * 20,),
+                    Icon(Icons.print)
+                  ],
+                ),
+              ),
+            )
+          ],
           bottom: AppBar(
             backgroundColor: Colors.white,
             automaticallyImplyLeading: false,

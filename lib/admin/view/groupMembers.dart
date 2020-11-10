@@ -48,7 +48,90 @@ class _GroupMembersState extends State<GroupMembers> with SingleTickerProviderSt
             padding: const EdgeInsets.all(8.0),
             child: FlatButton(
               onPressed: (){
-                //TODO add memer
+                AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.INFO,
+                    animType: AnimType.TOPSLIDE,
+                    body: StatefulBuilder(
+                      builder: (BuildContext context, void Function(void Function()) setState) {
+                        return DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TabBar(
+                                unselectedLabelColor: Colors.grey[500],
+                                labelColor: Colors.blue,
+                                tabs: [
+                                  Tab(text: 'Email',),
+                                  Tab(text: 'List',),
+                                ],
+                              ),
+                              Container(
+                                height: sizeConfig.height * 300,
+                                child: TabBarView(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Enter User Email :',
+                                              style: TextStyle(
+                                                fontSize: sizeConfig.getSize(24)
+                                              ),
+                                            ),
+                                            SizedBox(height: sizeConfig.height * 20,),
+                                            RoundedTextField(
+                                                labelText: 'User email',
+                                                icon: Icons.email_outlined,
+                                                controller: emailController,
+                                                focusNode: focusNode
+                                            )
+                                          ]
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.zero,
+                                        itemCount: demoGroupMembers.length,
+                                        itemBuilder: (_, index){
+                                          DemoUsersModel user = demoGroupMembers[index];
+                                          return Card(
+                                            child: ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundImage: CachedNetworkImageProvider(
+                                                    user.image
+                                                ),
+                                              ),
+                                              title: Text(
+                                                user.fName + ' ' + user.lName
+                                              ),
+                                              trailing: IconButton(
+                                                onPressed: (){},
+                                                icon: Icon(Icons.add)
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    btnOkOnPress: (){},
+                    btnCancelOnPress: (){}
+                )..show();
               },
               color: Colors.grey[700],
               child: Row(
@@ -264,92 +347,20 @@ class _GroupMembersState extends State<GroupMembers> with SingleTickerProviderSt
     DemoUsersModel user = demoGroupMembers[index];
     return GestureDetector(
       onTap: (){
-        Get.dialog(Dialog(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(18.0),
-                child: Text(
-                  'Confirm ?',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: sizeConfig.getSize(28)
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'Are you sure you want to make ${user.fName + ' ' +user.lName} an ADMIN?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: sizeConfig.getSize(20)
-                  ),
-                ),
-              ),
-              SizedBox(height: sizeConfig.height * 15,),
-              Container(
-                height: sizeConfig.height * 80,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: Colors.grey[400],width: 2),
-                    )
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => Get.back(),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                right: BorderSide(color: Colors.grey[400],width: 2),
-                              )
-                          ),
-                          child: Center(
-                            child: Text(
-                              'No',
-                              style: TextStyle(
-                                  fontSize: sizeConfig.getSize(22)
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            user.admin = true;
-                          });
-                          Get.back();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                right: BorderSide(color: Colors.grey[400],width: 2),
-                              )
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Yes',
-                              style: TextStyle(
-                                  fontSize: sizeConfig.getSize(22)
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ));
+        AwesomeDialog(
+            context: context,
+            dialogType: DialogType.WARNING,
+            animType: AnimType.TOPSLIDE,
+            title: 'Confirm!!!',
+            desc: 'Are you sure you want to make ${user.fName + ' ' +user.lName} an ADMIN?',
+            btnOkOnPress: (){
+              setState(() {
+                user.admin = true;
+              });
+              Get.back();
+            },
+            btnCancelOnPress: (){},
+        )..show();
       },
       child: Card(
         child: GridTile(
