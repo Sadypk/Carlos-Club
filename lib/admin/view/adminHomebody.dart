@@ -1,17 +1,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/general/view/calenderView.dart';
-import 'package:flutter_app/general/view/qrScanner.dart';
+import 'package:flutter_app/admin/view/absentAndPresentList.dart';
 import 'package:flutter_app/member/models/demos.dart';
-import 'package:flutter_app/member/view/memberCheckInHistory.dart';
 import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:flutter_app/utils/widgets/logoutDialog.dart';
+import 'package:flutter_app/utils/widgets/textField.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:marquee/marquee.dart';
 
 class AdminHomeBody extends StatefulWidget {
   @override
@@ -21,87 +18,213 @@ class AdminHomeBody extends StatefulWidget {
 class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
 
+  TextEditingController emailController = TextEditingController();
+  FocusNode focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
+    focusNode.addListener(() {setState(() {});});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Container(
-          height: sizeConfig.height * 40,
-          child: Marquee(
-            text: 'Some sample text that takes some space.',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: sizeConfig.getSize(22)
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+            child: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(
+                  MemberHomeScreenViewModel.profilePic
+              ),
             ),
-            scrollAxis: Axis.horizontal,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            blankSpace: 20.0,
-            velocity: 50.0,
-            pauseAfterRound: Duration(seconds: 1),
-            startPadding: 10.0,
-            accelerationDuration: Duration(seconds: 1),
-            accelerationCurve: Curves.linear,
-            decelerationDuration: Duration(milliseconds: 500),
-            decelerationCurve: Curves.easeOut,
           ),
-        ),
-        elevation: 0,
-        centerTitle: true,
-        actions: [
-          PopupMenuButton(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-              child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                    MemberHomeScreenViewModel.profilePic
-                ),
+          title: Text('Welcome: User Name'),
+          elevation: 0,
+          bottom: AppBar(
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            title: TabBar(
+              labelColor: AppConst.magenta,
+              unselectedLabelColor: Colors.grey[500],
+              labelStyle: TextStyle(
+                  fontSize: sizeConfig.getSize(18),
+                  fontWeight: FontWeight.bold
               ),
+              unselectedLabelStyle: TextStyle(
+                  fontSize: sizeConfig.getSize(18)
+              ),
+              tabs: [
+                Tab(text: 'Present',),
+                Tab(text: 'Absent',),
+              ],
             ),
-            onSelected: (bool value){
-              if(value){
-                Get.dialog(LogoutDialog());
-              }else{
-              }
-            },
-            itemBuilder: (_){
-              return [
-                PopupMenuItem(
-                  value: true,
-                  child: Text(
-                      'Logout'
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  onPressed: addMember,
+                  color: Colors.green,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add,color: Colors.white,),
+                      Text('Add User',style: TextStyle(color: Colors.white),),
+                    ],
                   ),
-                )
-              ];
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: sizeConfig.width * 80
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: sizeConfig.height * 15,),
-              qrScanners(),
-              Divider(
-                color: Colors.grey,
-                thickness: 1.5,
-                height: sizeConfig.height * 30,
-              ),
-              attendenceList(),
+                ),
+              )
             ],
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton(
+                child: Icon(Icons.exit_to_app),
+                onSelected: (bool value){
+                  if(value){
+                    Get.dialog(LogoutDialog());
+                  }else{
+                  }
+                },
+                itemBuilder: (_){
+                  return [
+                    PopupMenuItem(
+                      value: true,
+                      child: Text(
+                          'Logout'
+                      ),
+                    )
+                  ];
+                },
+              ),
+            )
+          ],
         ),
+        body: AbsentAndPresentListScreen(),
       ),
     );
   }
+
+  addMember(){
+    AwesomeDialog(
+        context: context,
+        dialogType: DialogType.INFO,
+        animType: AnimType.TOPSLIDE,
+        body: StatefulBuilder(
+          builder: (BuildContext context, void Function(void Function()) setState) {
+            return DefaultTabController(
+              length: 2,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TabBar(
+                    unselectedLabelColor: Colors.grey[500],
+                    labelColor: Colors.blue,
+                    tabs: [
+                      Tab(text: 'Email',),
+                      Tab(text: 'List',),
+                    ],
+                  ),
+                  Container(
+                    height: sizeConfig.height * 300,
+                    child: TabBarView(
+                      children: [
+                        Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Enter User Email :',
+                                      style: TextStyle(
+                                          fontSize: sizeConfig.getSize(24)
+                                      ),
+                                    ),
+                                    SizedBox(height: sizeConfig.height * 20,),
+                                    RoundedTextField(
+                                        labelText: 'User email',
+                                        icon: Icons.email_outlined,
+                                        controller: emailController,
+                                        focusNode: focusNode
+                                    )
+                                  ]
+                              ),
+                            )
+                        ),
+                        Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: demoGroupMembers.length,
+                              itemBuilder: (_, index){
+                                DemoUsersModel user = demoGroupMembers[index];
+                                return Card(
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage: CachedNetworkImageProvider(
+                                          user.image
+                                      ),
+                                    ),
+                                    title: Text(
+                                      user.fName + ' ' + user.lName
+                                    ),
+                                    trailing: IconButton(
+                                        onPressed: (){
+                                          Get.back();
+                                          dialog('Success', '${user.fName + ' ' + user.lName} has been added to your group');
+                                        },
+                                        icon: Icon(Icons.add)
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+        btnOkOnPress: (){},
+        btnCancelOnPress: (){}
+    )..show();
+  }
+
+  dialog(title,desc){
+    AwesomeDialog(
+        context: context,
+        dialogType: title == 'Success' ? DialogType.SUCCES : DialogType.ERROR,
+        animType: AnimType.TOPSLIDE,
+        title: title,
+        desc: desc,
+        btnOkOnPress: (){},
+        btnCancelOnPress: (){}
+    )..show();
+  }
+
+  /// OLD design
+/*  SingleChildScrollView(
+  child: Column(
+  children: [
+  SizedBox(height: sizeConfig.height * 15,),
+  qrScanners(),
+  Divider(
+  color: Colors.grey,
+  thickness: 1.5,
+  height: sizeConfig.height * 30,
+  ),
+  attendenceList(),
+  ],
+  ),
+  )
 
   Widget qrScanners() {
     return Padding(
@@ -398,5 +521,5 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
     }else{
       return time.format(context);
     }
-  }
+  }*/
 }

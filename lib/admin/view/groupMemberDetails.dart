@@ -4,24 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/general/view/calenderView.dart';
 import 'package:flutter_app/general/view/qrScanner.dart';
 import 'package:flutter_app/member/models/demos.dart';
+import 'package:flutter_app/member/view/memberCheckInHistory.dart';
 import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
-import 'package:flutter_app/utils/widgets/logoutDialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:marquee/marquee.dart';
 
-import 'memberCheckInHistory.dart';
-
-class HomeBody extends StatefulWidget {
+class GroupMemberDetailsScreen extends StatefulWidget {
   @override
-  _HomeBodyState createState() => _HomeBodyState();
+  _GroupMemberDetailsScreenState createState() => _GroupMemberDetailsScreenState();
 }
 
-class _HomeBodyState extends State<HomeBody> {
+class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   final GetSizeConfig sizeConfig = Get.find();
-
+  DemoUsersModel data = Get.arguments;
   @override
   void initState() {
     super.initState();
@@ -31,40 +28,20 @@ class _HomeBodyState extends State<HomeBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(
-                MemberHomeScreenViewModel.profilePic
+        title: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+              child: CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(
+                  data.image
+                ),
+              ),
             ),
-          ),
+            Text(data.fName + ' ' + data.lName),
+          ],
         ),
-        title: Text('Welcome: User Name'),
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton(
-              child: Icon(Icons.exit_to_app),
-              onSelected: (bool value){
-                if(value){
-                  Get.dialog(LogoutDialog());
-                }else{
-                }
-              },
-              itemBuilder: (_){
-                return [
-                  PopupMenuItem(
-                    value: true,
-                    child: Text(
-                        'Logout'
-                    ),
-                  )
-                ];
-              },
-            ),
-          )
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -100,12 +77,12 @@ class _HomeBodyState extends State<HomeBody> {
             checkInFailed();
           }
         },
-        color: AppConst.green,
+        color: AppConst.deepOrange,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(sizeConfig.width * 20)),
         minWidth: double.infinity,
         height: sizeConfig.height * 80,
         child: Text(
-          MemberHomeScreenViewModel.btnScanQr,
+          MemberHomeScreenViewModel.btnManualCheckIn,
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: sizeConfig.getSize(28),
@@ -143,7 +120,7 @@ class _HomeBodyState extends State<HomeBody> {
                 itemCount: demoCheckInData.length > 10 ? 10 :  demoCheckInData.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: sizeConfig.height * 10),
-                itemBuilder: data,
+                itemBuilder: listItem,
               ),
               demoCheckInData.length > 10 ?
               InkWell(
@@ -194,7 +171,7 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
-  Widget data(BuildContext context, int index) {
+  Widget listItem(BuildContext context, int index) {
     DemoCheckInModel data = demoCheckInData[index];
     return Padding(
       padding:  EdgeInsets.only(

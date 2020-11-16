@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/admin/view/adminHomebody.dart';
-import 'package:flutter_app/admin/view/groupMembers.dart';
 import 'package:flutter_app/general/view/userProfileScreen.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
@@ -14,7 +13,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   final GetSizeConfig sizeConfig = Get.find();
 
-  final List<Widget> _pages = [AdminHomeBody(), GroupMembers(), ProfileScreen()];
+  final List<Widget> _pages = [AdminHomeBody(), ProfileScreen()];
 
   int index = 0;
 
@@ -38,12 +37,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   Icons.home
               ),
               label: 'Home'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(
-                  Icons.group
-              ),
-              label: 'Group'
           ),
           BottomNavigationBarItem(
               icon: Icon(

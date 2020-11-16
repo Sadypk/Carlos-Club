@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/general/view_model/loginPage.dart';
 import 'package:flutter_app/general/view_model/registerPage.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:flutter_app/utils/widgets/blueButton.dart';
 import 'package:flutter_app/utils/widgets/textField.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterPage extends StatefulWidget {
 
@@ -24,6 +28,8 @@ class _RegisterPageState extends State<RegisterPage> {
   FocusNode emailNode;
   FocusNode passwordNode;
   FocusNode confPassNode;
+
+  File image;
 
   @override
   void initState() {
@@ -57,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget header() {
     return Container(
-      height: sizeConfig.height * 300,
+      height: sizeConfig.height * 200,
       // color: Colors.red,
       child: Center(
         child: Text(
@@ -74,20 +80,44 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget form() {
     return Column(
       children: [
+        Stack(
+          children: [
+            CircleAvatar(
+              radius: sizeConfig.getSize(45),
+              backgroundImage: image == null ? AssetImage(
+                'assets/images/demo_profile_image.jpg'
+              ) : FileImage(image),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: selectPic,
+                child: CircleAvatar(
+                  radius: sizeConfig.getSize(20),
+                  backgroundColor: Colors.white60,
+                  child: Icon(Icons.camera_alt_outlined),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: sizeConfig.height * 10,),
         RoundedTextField(
           focusNode: nameNode,
           labelText: RegisterPageViewModel.textFieldHintName,
           icon: Icons.person_outline,
           controller: nameController,
         ),
-        SizedBox(height: sizeConfig.height * 30,),
+        SizedBox(height: sizeConfig.height * 10,),
         RoundedTextField(
           focusNode: emailNode,
           labelText: RegisterPageViewModel.textFieldHintEmail,
           icon: Icons.email_outlined,
           controller: emailController,
         ),
-        SizedBox(height: sizeConfig.height * 30,),
+        SizedBox(height: sizeConfig.height * 10,),
         RoundedTextField(
           focusNode: passwordNode,
           labelText: RegisterPageViewModel.textFieldHintPassword,
@@ -95,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
           controller: passwordController,
           obscureText: true,
         ),
-        SizedBox(height: sizeConfig.height * 30,),
+        SizedBox(height: sizeConfig.height * 10,),
         RoundedTextField(
           focusNode: confPassNode,
           labelText: RegisterPageViewModel.textFieldHintConfirmPassword,
@@ -103,7 +133,9 @@ class _RegisterPageState extends State<RegisterPage> {
           controller: confPasswordController,
           obscureText: true,
         ),
-        SizedBox(height: sizeConfig.height * 60,),
+        SizedBox(height: sizeConfig.height * 30,),
+        signUpMethods(),
+        SizedBox(height: sizeConfig.height * 30,),
         BlueButton(
             text: RegisterPageViewModel.btnRegister,
             onTap: (){
@@ -112,6 +144,47 @@ class _RegisterPageState extends State<RegisterPage> {
             }
         )
       ],
+    );
+  }
+
+  Function signUpWithGoogle = (){};
+  Function signUpWithFacebook = (){};
+
+  Widget signUpMethods() {
+    return Container(
+      height: sizeConfig.height * 70,
+      width: sizeConfig.width * 600,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            RegisterPageViewModel.signUpMethodText,
+            style: TextStyle(
+              fontSize: sizeConfig.getSize(16)
+            ),
+          ),
+          signUpMethod(LoginPageViewModel.imgSignInWithGoogle, signUpWithGoogle),
+          signUpMethod(LoginPageViewModel.imgSignInWithFacebook, signUpWithFacebook),
+        ],
+      ),
+    );
+  }
+
+  Widget signUpMethod(String image, Function onTap){
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(111)),
+        child: Padding(
+            padding: EdgeInsets.all(sizeConfig.getSize(4)),
+            child: CircleAvatar(
+              backgroundImage: AssetImage(image),
+              backgroundColor: Colors.transparent,
+              radius: sizeConfig.getSize(15),
+            )
+        ),
+      ),
     );
   }
 
@@ -133,5 +206,28 @@ class _RegisterPageState extends State<RegisterPage> {
           ]
       ),
     );
+  }
+
+
+
+
+
+
+
+
+  void selectPic() async{
+    final picker = ImagePicker();
+    try{
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickedFile != null) {
+          image = File(pickedFile.path);
+        } else {
+          print('No image selected.');
+        }
+      });
+    }catch(e){
+      print(e.toString());
+    }
   }
 }

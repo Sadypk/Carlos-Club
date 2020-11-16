@@ -6,5 +6,5 @@ class LoginPageViewModel{
   static const String imgSignInWithGoogle = 'assets/images/signUpMethods/google.png';
   static const String imgSignInWithFacebook = 'assets/images/signUpMethods/facebook.png';
   static const String footerTextNormal = 'Don\'t have an account?';
-  static const String footerTextBold = 'Sign In';
+  static const String footerTextBold = ' Click here';
 }
