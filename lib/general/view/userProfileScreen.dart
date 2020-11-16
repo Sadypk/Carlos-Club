@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/general/view_model/profileScreen.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'calenderView.dart';
 
@@ -17,10 +20,47 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
+  bool edit = false;
+  File image;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent,elevation: 0,),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
+              onPressed: (){
+                setState(() {
+                  edit = !edit;
+                });
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    edit ? Icons.save : Icons.edit,
+                    color: Colors.white,
+                    size: sizeConfig.getSize(20),
+                  ),
+                  SizedBox(width: sizeConfig.width * 10,),
+                  Text(
+                    edit ? 'Save' : 'Edit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: sizeConfig.getSize(18)
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
@@ -55,11 +95,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: CircleAvatar(
                       radius: sizeConfig.getSize(65),
                       backgroundColor: Colors.white,
-                      child: CircleAvatar(
-                        radius: sizeConfig.getSize(60),
-                        backgroundImage: CachedNetworkImageProvider(
-                            MemberHomeScreenViewModel.profilePic
-                        ),
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: sizeConfig.getSize(60),
+                            backgroundImage: CachedNetworkImageProvider(
+                                MemberHomeScreenViewModel.profilePic
+                            ),
+                          ),
+                          if (edit) Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: selectPic,
+                              child: CircleAvatar(
+                                radius: sizeConfig.getSize(20),
+                                backgroundColor: Colors.white60,
+                                child: Icon(
+                                  Icons.camera
+                                ),
+                              ),
+                            ),
+                          ) else SizedBox(),
+                        ],
                       ),
                     ),
                   )
@@ -267,6 +326,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+
+
+
+
+
+
+
+
+  void selectPic() async{
+    final picker = ImagePicker();
+    try{
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickedFile != null) {
+          image = File(pickedFile.path);
+        } else {
+          print('No image selected.');
+        }
+      });
+    }catch(e){
+      print(e.toString());
+    }
   }
 }
 
