@@ -22,7 +22,7 @@ class AbsentAndPresentListScreen extends StatelessWidget {
       shrinkWrap: true,
       itemCount: demoGroupMembers.length,
       padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30, vertical: sizeConfig.height * 15),
-      itemBuilder: presentItem,
+      itemBuilder: item,
     );
   }
 
@@ -31,61 +31,11 @@ class AbsentAndPresentListScreen extends StatelessWidget {
       shrinkWrap: true,
       itemCount: 7,
       padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30, vertical: sizeConfig.height * 15),
-      itemBuilder: absentItem,
-    );
-  }
-
-  Widget presentItem(BuildContext context, int index) {
-    DemoUsersModel data = demoGroupMembers[index];
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(8),
-        onTap: (){},
-        leading: CircleAvatar(
-          radius: sizeConfig.getSize(30),
-          backgroundImage: CachedNetworkImageProvider(
-            data.image
-          ),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RichText(
-              text: TextSpan(
-                  text: data.fName,
-                  style: TextStyle(
-                      color: Colors.black,
-                    fontSize: sizeConfig.getSize(18),
-                    fontWeight: FontWeight.normal
-                  ),
-                  children: [
-                    TextSpan(
-                        text: ' ',
-                    ),
-                    TextSpan(
-                        text: data.lName,
-                    )
-                  ]
-              ),
-            ),
-            data.admin ? Text(
-              'Admin',
-              style: TextStyle(color: Colors.red),
-            ) : SizedBox()
-          ],
-        ),
-        trailing: IconButton(
-          onPressed: (){},
-          icon: Icon(
-            Icons.settings
-          ),
-        ),
-      ),
+      itemBuilder: item,
     );
   }
   
-  Widget absentItem(BuildContext context, int index) {
+  Widget item(BuildContext context, int index) {
     DemoUsersModel data = demoGroupMembers[index];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
@@ -124,12 +74,6 @@ class AbsentAndPresentListScreen extends StatelessWidget {
               style: TextStyle(color: Colors.red),
             ) : SizedBox()
           ],
-        ),
-        trailing: IconButton(
-          onPressed: (){},
-          icon: Icon(
-            Icons.settings
-          ),
         ),
       ),
     );

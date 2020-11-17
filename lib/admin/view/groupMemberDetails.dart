@@ -8,6 +8,7 @@ import 'package:flutter_app/member/view/memberCheckInHistory.dart';
 import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
 import 'package:flutter_app/utils/appConst.dart';
 import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:flutter_app/utils/widgets/textField.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -19,9 +20,14 @@ class GroupMemberDetailsScreen extends StatefulWidget {
 class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   final GetSizeConfig sizeConfig = Get.find();
   DemoUsersModel data = Get.arguments;
+
+  TextEditingController emailController = TextEditingController();
+  FocusNode focusNode;
+
   @override
   void initState() {
     super.initState();
+    focusNode = FocusNode()..addListener(() {setState(() {});});
   }
 
   @override
@@ -70,12 +76,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
       padding: EdgeInsets.only(bottom: sizeConfig.height * 10),
       child: FlatButton(
         onPressed: () async{
-          String result = await Get.dialog(QRScanner());
-          if(result == 'success'){
-            checkInSuccessFull();
-          }else{
-            checkInFailed();
-          }
+          await manualCheckIn();
         },
         color: AppConst.deepOrange,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(sizeConfig.width * 20)),
@@ -91,6 +92,107 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
         ),
       ),
     );
+  }
+
+  manualCheckIn() {
+    String selectedDate;
+    String selectedTime;
+    AwesomeDialog(
+        context: context,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.TOPSLIDE,
+        body: StatefulBuilder(
+          builder: (BuildContext context, void Function(void Function()) setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RoundedTextField(
+                  labelText: 'User email',
+                  icon: Icons.email_outlined,
+                  controller: emailController,
+                  focusNode: focusNode
+                ),
+                Container(
+                  height: sizeConfig.height * 80,
+                  padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30),
+                  child: Row(
+                    children: [
+                      Text(
+                        MemberHomeScreenViewModel.manualCheckInChooseDate,
+                        style: TextStyle(
+                          fontSize: sizeConfig.getSize(18),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async{
+                          selectedDate = await selectDate();
+                          if(selectedDate != null){
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          height: sizeConfig.height * 60,
+                          width: sizeConfig.width * 350,
+                          color: selectedDate == null ? Colors.grey[300] : Colors.transparent,
+                          child: Center(
+                            child: Text(
+                              selectedDate ?? 'dd / MM',
+                              style: TextStyle(
+                                fontSize: sizeConfig.getSize(18),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  height: sizeConfig.height * 80,
+                  padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30),
+                  child: Row(
+                    children: [
+                      Text(
+                        MemberHomeScreenViewModel.manualCheckInChooseTime,
+                        style: TextStyle(
+                          fontSize: sizeConfig.getSize(18),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async{
+                          selectedTime = await selectTime();
+                          if(selectedTime != null){
+                            setState((){});
+                          }
+                        },
+                        child: Container(
+                          height: sizeConfig.height * 60,
+                          width: sizeConfig.width * 350,
+                          color: selectedTime == null ? Colors.grey[300] : Colors.transparent,
+                          child: Center(
+                            child: Text(
+                              selectedTime ?? 'hh : mm',
+                              style: TextStyle(
+                                fontSize: sizeConfig.getSize(18),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        btnOkOnPress: (){
+          checkInSuccessFull();
+        },
+        btnCancelOnPress: (){
+          checkInFailed();
+        }
+    )..show();
   }
 
   Widget attendenceList() {
