@@ -39,6 +39,10 @@ dependencies:
   connectivity: ^2.0.1
   image_picker: ^0.6.7+14
 
+  firebase_core: ^0.5.2
+  firebase_auth: ^0.18.3
+  cloud_firestore: ^0.14.3
+  logger: ^0.9.4
 
 dev_dependencies:
   flutter_test:
