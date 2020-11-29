@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/general/view/splashScreen.dart';
-import 'package:flutter_app/utils/appConst.dart';
-import 'package:flutter_app/utils/getControllers/userType.dart';
-import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:flutter_app/splashScreen.dart';
+import 'package:flutter_app/main_app/resources/appConst.dart';
 import 'package:get/get.dart';
+
+import 'authentication/models/userType.dart';
+import 'main_app/resources/sizeConfig.dart';
 
 main() => runApp(App());
 
