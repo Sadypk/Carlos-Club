@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_app/Authentication/view_model/user_data_view_model.dart';
 import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:logger/logger.dart';
 import 'package:get/get.dart';
 
@@ -32,7 +32,7 @@ class UserProfileDataRepository{
         logger.i(value.docChanges[0].doc.data());
 
         var data = UserModel.fromJson(value.docChanges[0].doc.data());
-        userProfileViewModel.userData.value = data;
+        userProfileViewModel.userModel = data;
 
       });
     }catch(e){

@@ -1,5 +1,8 @@
 class StringResources{
 
+  //Validator
+  // static const String loginHeaderText = 'Sign In';
+
   //Splash Screen
   static const String splashScreenImage = 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png';
 
