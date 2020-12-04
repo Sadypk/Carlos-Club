@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/admin/view/adminHomeScreen.dart';
-import 'package:flutter_app/general/repository/splashScreen.dart';
-import 'package:flutter_app/general/view/loginPage.dart';
-import 'package:flutter_app/member/view/memberHomeScreen.dart';
-import 'package:flutter_app/utils/getControllers/authController.dart';
-import 'package:flutter_app/utils/getControllers/userType.dart';
-import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:flutter_app/authentication/view/loginPage.dart';
+import 'package:flutter_app/main_app/getControllers/authController.dart';
+import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,44 +17,47 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-  GetSizeConfig sizeConfig = Get.find();
+  GetStorage localStorage = GetStorage();
+  AuthController authController = Get.find();
+  UserDataController userDataController = Get.find();
+  GetSizeConfig getSizeConfig = Get.find();
 
   @override
   void initState() {
-    if(mounted){
+    if (!mounted) {
+      return;
+    } else {
       super.initState();
-      Future.delayed(Duration(seconds: 3),()=> Get.off(Root()));
-    }else{
-      return ;
+      initiateSize();
+      checkSession();
+    }
+  }
+
+  initiateSize() {
+    getSizeConfig.setConfig(Get.height / 1000, Get.width / 1000);
+  }
+
+  checkSession() {
+    print('Checking session...');
+    print(localStorage.read('userValues'));
+    bool session = localStorage.hasData('userValues');
+    if (session) {
+      userDataController.userData.value = UserModel.fromJson(localStorage.read('userValues'));
+      Future.delayed(Duration(seconds: 3), () => authController.sessionNavigation(userDataController.userData.value.userLoginType));
+    } else {
+      print('Session Availability: $session');
+      Future.delayed(Duration(seconds: 3), () => Get.off(LoginPage()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    sizeConfig.setConfig(Get.height/1000, Get.width/1000);
     return Scaffold(
       body: Center(
         child: CachedNetworkImage(
-          imageUrl: SplashScreenRepo.splashScreenImage,
-          // fit: BoxFit.cover,
+          imageUrl: StringResources.splashScreenImage,
         ),
       ),
     );
-  }
-}
-
-class Root extends StatelessWidget {
-  final AuthController authController = Get.find();
-  final GetUserType userType = Get.find();
-  @override
-  Widget build(BuildContext context) {
-    return Obx((){
-      return (authController.user != null?  //if there is an user
-      userType.userType.value == UserType.admin?AdminHomeScreen(): //if user is admin
-      userType.userType.value == UserType.admin?MemberHomeScreen() //if user is member
-      :LoginPage() // User neither member or admin(SYSTEM ERROR)
-          :LoginPage()); //no logged in user
-    });
   }
 }

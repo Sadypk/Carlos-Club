@@ -1,12 +1,18 @@
 import 'dart:io';
+import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/main_app/getControllers/authController.dart';
 import 'package:flutter_app/main_app/resources/sizeConfig.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/blueButton.dart';
+import 'package:flutter_app/main_app/widgets/loader.dart';
 import 'package:flutter_app/main_app/widgets/textField.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RegisterPage extends StatefulWidget {
 
@@ -15,8 +21,12 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final GetSizeConfig sizeConfig = Get.find();
 
+  final formKey = GlobalKey<FormState>();
+
+  final GetSizeConfig sizeConfig = Get.find();
+  final AuthController authController = Get.find();
+  var logger = Logger();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -27,34 +37,132 @@ class _RegisterPageState extends State<RegisterPage> {
   FocusNode passwordNode;
   FocusNode confPassNode;
 
+  final picker = ImagePicker();
   File image;
+  bool isLoading;
+
+
+  bool rememberUser = true;
 
   @override
   void initState() {
     super.initState();
+    isLoading = false;
     nameNode = FocusNode();
     emailNode = FocusNode();
     passwordNode = FocusNode();
     confPassNode = FocusNode();
-    nameNode.addListener(() {setState(() {});});
-    emailNode.addListener(() {setState(() {});});
-    passwordNode.addListener(() {setState(() {});});
-    confPassNode.addListener(() {setState(() {});});
+    nameNode.addListener(() {
+      setState(() {});
+    });
+    emailNode.addListener(() {
+      setState(() {});
+    });
+    passwordNode.addListener(() {
+      setState(() {});
+    });
+    confPassNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confPasswordController.dispose();
+
+    nameNode.dispose();
+    emailNode.dispose();
+    passwordNode.dispose();
+    confPassNode.dispose();
+  }
+
+
+  void selectPic() async {
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickedFile != null) {
+          image = File(pickedFile.path);
+        } else {
+          print('No image selected.');
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  sendDataToFunction() async {
+    setState(() {
+      isLoading = true;
+    });
+    String userType = 'member';
+    String loginType = 'regular';
+    var hasExceptionOnCreation = await authController.createUser(nameController.text, emailController.text.trim(), passwordController.text.trim(), image, userType, loginType);
+    logger.i(hasExceptionOnCreation);
+    if (hasExceptionOnCreation != null) {
+      setState(() {
+        isLoading = false;
+      });
+      getSnackbar(hasExceptionOnCreation);
+    }
+    else {
+      var hasException =  await authController.login(emailController.text, passwordController.text,rememberUser);
+      if(hasException != null){
+        setState(() {
+          isLoading = false;
+        });
+        getSnackbar(hasException);
+      }
+    }
+  }
+
+  getSnackbar(hasException){
+    Get.snackbar(
+      "Error",
+      hasException,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+      margin: EdgeInsets.only(left: sizeConfig.width * 10,
+          right: sizeConfig.width * 10,
+          bottom: sizeConfig.height * 15),
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Column(
-          children: [
-            header(),
-            form(),
-            SizedBox(height: sizeConfig.height * 50,),
-            footer()
-          ],
-        ),
+      body: Stack(
+        children: [
+          IgnorePointer(
+            ignoring: isLoading?true:false,
+            child: Opacity(
+              opacity: isLoading?0.5:1,
+              child: Container(
+                color: isLoading?Colors.grey[50]:Color(0xffF2F2FF),
+                child: Center(
+                  child: SingleChildScrollView(
+                    physics: ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        header(),
+                        form(),
+                        SizedBox(height: sizeConfig.height * 50,),
+                        footer()
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          isLoading?Loader():Container(),
+        ],
       ),
     );
   }
@@ -76,101 +184,178 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget form() {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            CircleAvatar(
-              radius: sizeConfig.getSize(45),
-              backgroundImage: image == null ? AssetImage(
-                'assets/images/demo_profile_image.jpg'
-              ) : FileImage(image),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: selectPic,
-                child: CircleAvatar(
-                  radius: sizeConfig.getSize(20),
-                  backgroundColor: Colors.white60,
-                  child: Icon(Icons.camera_alt_outlined),
+
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: sizeConfig.getSize(45),
+                backgroundImage: image == null ? AssetImage(
+                    'assets/images/demo_profile_image.jpg'
+                ) : FileImage(image),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: selectPic,
+                  child: CircleAvatar(
+                    radius: sizeConfig.getSize(20),
+                    backgroundColor: Colors.white60,
+                    child: Icon(Icons.camera_alt_outlined),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: sizeConfig.height * 10,),
-        RoundedTextField(
-          focusNode: nameNode,
-          labelText: StringResources.registrationTextFieldHintName,
-          icon: Icons.person_outline,
-          controller: nameController,
-        ),
-        SizedBox(height: sizeConfig.height * 10,),
-        RoundedTextField(
-          focusNode: emailNode,
-          labelText: StringResources.registrationTextFieldHintEmail,
-          icon: Icons.email_outlined,
-          controller: emailController,
-        ),
-        SizedBox(height: sizeConfig.height * 10,),
-        RoundedTextField(
-          focusNode: passwordNode,
-          labelText: StringResources.registrationTextFieldHintPassword,
-          icon: Icons.lock_outline,
-          controller: passwordController,
-          obscureText: true,
-        ),
-        SizedBox(height: sizeConfig.height * 10,),
-        RoundedTextField(
-          focusNode: confPassNode,
-          labelText: StringResources.registrationTextFieldHintConfirmPassword,
-          icon: Icons.lock_outline,
-          controller: confPasswordController,
-          obscureText: true,
-        ),
-        SizedBox(height: sizeConfig.height * 30,),
-        signUpMethods(),
-        SizedBox(height: sizeConfig.height * 30,),
-        BlueButton(
-            text: StringResources.registrationBtnRegister,
-            onTap: (){
-              print(emailController.text);
-              print(passwordController.text);
-            }
-        )
-      ],
-    );
-  }
-
-  Function signUpWithGoogle = (){};
-  Function signUpWithFacebook = (){};
-
-  Widget signUpMethods() {
-    return Container(
-      height: sizeConfig.height * 70,
-      width: sizeConfig.width * 600,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            StringResources.registrationTsignUpMethodText,
-            style: TextStyle(
-              fontSize: sizeConfig.getSize(16)
-            ),
+            ],
           ),
-          signUpMethod(StringResources.loginImgSignInWithGoogle, signUpWithGoogle),
-          signUpMethod(StringResources.loginImgSignInWithFacebook, signUpWithFacebook),
+          SizedBox(height: sizeConfig.height * 10,),
+          RoundedTextField(
+            focusNode: nameNode,
+            labelText: StringResources.registrationTextFieldHintName,
+            icon: Icons.person_outline,
+            controller: nameController,
+          ),
+          SizedBox(height: sizeConfig.height * 10,),
+          RoundedTextField(
+            focusNode: emailNode,
+            labelText: StringResources.registrationTextFieldHintEmail,
+            icon: Icons.email_outlined,
+            controller: emailController,
+          ),
+          SizedBox(height: sizeConfig.height * 10,),
+          RoundedTextField(
+            focusNode: passwordNode,
+            labelText: StringResources.registrationTextFieldHintPassword,
+            icon: Icons.lock_outline,
+            controller: passwordController,
+            obscureText: true,
+          ),
+          SizedBox(height: sizeConfig.height * 10,),
+          RoundedTextField(
+            focusNode: confPassNode,
+            labelText: StringResources.registrationTextFieldHintConfirmPassword,
+            icon: Icons.lock_outline,
+            controller: confPasswordController,
+            obscureText: true,
+          ),
+          SizedBox(height: sizeConfig.height * 30,),
+          signUpMethods(),
+          SizedBox(height: sizeConfig.height * 30,),
+          BlueButton(
+              text: StringResources.registrationBtnRegister,
+              onTap: () async {
+
+                FocusScope.of(this.context).unfocus();
+                if (formKey.currentState.validate()) {
+
+                   if (passwordController.text != confPasswordController.text) {
+                     Get.snackbar(
+                       "Text Field Error!",
+                       "Password does not match",
+                       backgroundColor: Colors.black,
+                       colorText: Colors.white,
+                       margin: EdgeInsets.only(left: sizeConfig.width * 10,
+                           right: sizeConfig.width * 10,
+                           bottom: sizeConfig.height * 15),
+                       snackPosition: SnackPosition.BOTTOM,
+                     );
+                   }else{
+                     if(image == null){
+                       print('here');
+                       //Converting Asset to File for profile picture
+                       Directory directory = await getApplicationDocumentsDirectory();
+                       var dbPath = join(directory.path, "temp.jpg");
+                       ByteData data = await rootBundle.load("assets/images/demo_profile_image.jpg");
+                       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+                       image = await File(dbPath).writeAsBytes(bytes);
+                       sendDataToFunction();
+                     }else{
+                       sendDataToFunction();
+                     }
+                   }
+                }
+              }
+          )
         ],
       ),
     );
   }
 
-  Widget signUpMethod(String image, Function onTap){
+  Widget signUpMethods() {
+    return Container(
+      height: sizeConfig.height * 100,
+      width: sizeConfig.width * 750,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            StringResources.registrationSignUpMethodText,
+            style: TextStyle(
+                fontSize: sizeConfig.getSize(16)
+            ),
+          ),
+          signUpMethod(
+              StringResources.loginImgSignInWithGoogle, 'google'),
+          signUpMethod(
+              StringResources.loginImgSignInWithFacebook, 'facebook'),
+        ],
+      ),
+    );
+  }
+
+  Widget signUpMethod(String image, String identifier){
     return GestureDetector(
-      onTap: onTap,
+      onTap: () async {
+        if(identifier == 'facebook'){
+          setState(() {
+            isLoading = true;
+          });
+          print('Checking Facebook...');
+          AuthController authFacebook = Get.find();
+          var hasException = await authFacebook.loginFacebook();
+          if(hasException != null){
+            setState(() {
+              isLoading = false;
+            });
+            Get.snackbar(
+              "Error signing in",
+              hasException,
+              backgroundColor: Colors.black,
+              colorText: Colors.white,
+              margin: EdgeInsets.only(left: 10,
+                  right: 10,
+                  bottom: 15),
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          }
+        }else if(identifier == 'google'){
+          setState(() {
+            isLoading = true;
+          });
+          print('Checking Google...');
+          AuthController authGoogle = Get.find();
+          var hasException = await authGoogle.handleGoogleSignIn();
+          if(hasException != null){
+            setState(() {
+              isLoading = false;
+            });
+            Get.snackbar(
+              "Error signing in",
+              hasException,
+              backgroundColor: Colors.black,
+              colorText: Colors.white,
+              margin: EdgeInsets.only(left: 10,
+                  right: 10,
+                  bottom: 15),
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          }
+        }
+      },
       child: Card(
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(111)),
@@ -179,7 +364,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: CircleAvatar(
               backgroundImage: AssetImage(image),
               backgroundColor: Colors.transparent,
-              radius: sizeConfig.getSize(15),
+              radius: sizeConfig.getSize(30),
             )
         ),
       ),
@@ -195,7 +380,8 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           children: [
             TextSpan(
-                recognizer: TapGestureRecognizer()..onTap = () => Get.back(),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => Get.back(),
                 text: StringResources.registrationFooterTextBold,
                 style: TextStyle(
                     fontWeight: FontWeight.bold
@@ -204,28 +390,5 @@ class _RegisterPageState extends State<RegisterPage> {
           ]
       ),
     );
-  }
-
-
-
-
-
-
-
-
-  void selectPic() async{
-    final picker = ImagePicker();
-    try{
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      setState(() {
-        if (pickedFile != null) {
-          image = File(pickedFile.path);
-        } else {
-          print('No image selected.');
-        }
-      });
-    }catch(e){
-      print(e.toString());
-    }
   }
 }

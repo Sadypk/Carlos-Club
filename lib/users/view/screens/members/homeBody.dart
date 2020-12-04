@@ -21,6 +21,7 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
+
   @override
   void initState() {
     super.initState();

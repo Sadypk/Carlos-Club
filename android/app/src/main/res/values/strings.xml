@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Carlos App</string>
+    <!--<string name="facebook_app_id">677418989636114</string>
+    <string name="fb_login_protocol_scheme">fb677418989636114</string>-->
+
+    <string name="facebook_app_id">896317234467172</string>
+    <string name="fb_login_protocol_scheme">fb896317234467172</string>
+
+</resources>

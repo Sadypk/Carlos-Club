@@ -1,15 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/admin/view/adminHomeScreen.dart';
-import 'package:flutter_app/general/view/registerPage.dart';
-import 'package:flutter_app/general/view_model/loginPage.dart';
-import 'package:flutter_app/member/view/memberHomeScreen.dart';
-import 'package:flutter_app/utils/appConst.dart';
-import 'package:flutter_app/utils/getControllers/authController.dart';
-import 'package:flutter_app/utils/getControllers/userType.dart';
-import 'package:flutter_app/utils/sizeConfig.dart';
-import 'package:flutter_app/utils/widgets/blueButton.dart';
-import 'package:flutter_app/utils/widgets/textField.dart';
+import 'package:flutter_app/authentication/view/registerPage.dart';
+import 'package:flutter_app/main_app/getControllers/authController.dart';
+import 'package:flutter_app/main_app/resources/appConst.dart';
+import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/main_app/widgets/blueButton.dart';
+import 'package:flutter_app/main_app/widgets/loader.dart';
+import 'package:flutter_app/main_app/widgets/textField.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,34 +17,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final GetSizeConfig sizeConfig = Get.find();
 
-  final TextEditingController emailController = TextEditingController();
-
-  final TextEditingController passwordController = TextEditingController();
-
+  final formKey = GlobalKey<FormState>();
   AuthController authController = Get.find();
+  GetSizeConfig sizeConfig = Get.find();
 
-  final Function signUpWithGoogle = () {
-    GetUserType userType = Get.find();
-    userType.setType(UserType.normal);
-    Get.offAll(MemberHomeScreen());
-  };
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-  final Function signUpWithFacebook = () {
-    GetUserType userType = Get.find();
-    userType.setType(UserType.admin);
-    Get.offAll(AdminHomeScreen());
-  };
 
   FocusNode emailNode;
   FocusNode passwordNode;
 
   bool rememberUser = false;
+  bool isLoading;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    isLoading = false;
     emailNode = FocusNode();
     passwordNode = FocusNode();
     emailNode.addListener(() {setState(() {});});
@@ -53,18 +43,57 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  dispose(){
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+
+    emailNode.dispose();
+    passwordNode.dispose();
+  }
+
+  getSnackbar(hasException){
+    Get.snackbar(
+      "Error signing in",
+      hasException,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+      margin: EdgeInsets.only(left: sizeConfig.width * 10,
+          right: sizeConfig.width * 10,
+          bottom: sizeConfig.height * 15),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Column(
-          children: [
-            header(),
-            form(),
-            signUpMethods(),
-            footer()
-          ],
-        ),
+      body:Stack(
+        children: [
+          IgnorePointer(
+            ignoring: isLoading?true:false,
+            child: Opacity(
+              opacity: isLoading?0.5:1,
+              child: Container(
+                color: isLoading?Colors.grey[50]:Color(0xffF2F2FF),
+                child: Center(
+                  child:   SingleChildScrollView(
+                    physics: ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        header(),
+                        form(),
+                        signUpMethods(),
+                        footer()
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          isLoading?Loader():Container(),
+        ],
       ),
     );
   }
@@ -75,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
       // color: Colors.red,
       child: Center(
         child: Text(
-          LoginPageViewModel.headerText,
+          StringResources.loginHeaderText,
           style: TextStyle(
               fontSize: sizeConfig.getSize(34),
               fontWeight: FontWeight.bold
@@ -86,35 +115,48 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget form() {
-    return Column(
-      children: [
-        RoundedTextField(
-          focusNode: emailNode,
-          labelText: LoginPageViewModel.textFieldHintEmail,
-          icon: Icons.email,
-          controller: emailController,
-        ),
-        SizedBox(height: sizeConfig.height * 30,),
-        RoundedTextField(
-          focusNode: passwordNode,
-          labelText: LoginPageViewModel.textFieldHintPassword,
-          icon: Icons.lock,
-          controller: passwordController,
-          obscureText: true
-        ),
-        SizedBox(height: sizeConfig.height * 20,),
-        rememberMe(),
-        SizedBox(height: sizeConfig.height * 20,),
-        BlueButton(
-            text: LoginPageViewModel.btnLogin,
-            onTap: (){
-              if(emailController.text.isNotEmpty && passwordController.text.isNotEmpty){
-                authController.login(emailController.text, passwordController.text);
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          RoundedTextField(
+            focusNode: emailNode,
+            labelText: StringResources.loginTextFieldHintEmail,
+            icon: Icons.email,
+            controller: emailController,
+          ),
+          SizedBox(height: sizeConfig.height * 30,),
+          RoundedTextField(
+            focusNode: passwordNode,
+            labelText: StringResources.loginTextFieldHintPassword,
+            icon: Icons.lock,
+            controller: passwordController,
+            obscureText: true
+          ),
+          SizedBox(height: sizeConfig.height * 20,),
+          rememberMe(),
+          SizedBox(height: sizeConfig.height * 20,),
+          BlueButton(
+              text: StringResources.loginBtnLogin,
+              onTap: () async {
+                FocusScope.of(context).unfocus();
+                if(formKey.currentState.validate()){
+                  setState(() {
+                    isLoading = true;
+                  });
+                  var hasException =  await authController.login(emailController.text, passwordController.text,rememberUser);
+                  if(hasException != null){
+                    setState(() {
+                      isLoading = false;
+                    });
+                    getSnackbar(hasException);
+                  }
+                }
+                //login as member by default
               }
-              //login as member by default
-            }
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
@@ -169,36 +211,44 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          signUpMethod(LoginPageViewModel.imgSignInWithGoogle, signUpWithGoogle),
-          signUpMethod(LoginPageViewModel.imgSignInWithFacebook, signUpWithFacebook),
+          signUpMethod(StringResources.loginImgSignInWithGoogle, 'google'),
+          signUpMethod(StringResources.loginImgSignInWithFacebook, 'facebook'),
         ],
       ),
     );
   }
 
-  Widget footer() {
-    return RichText(
-      text: TextSpan(
-          text: LoginPageViewModel.footerTextNormal,
-          style: TextStyle(
-              color: Colors.black
-          ),
-          children: [
-            TextSpan(
-                recognizer: TapGestureRecognizer()..onTap = () => Get.to(RegisterPage()),
-                text: LoginPageViewModel.footerTextBold,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold
-                )
-            )
-          ]
-      ),
-    );
-  }
-
-  Widget signUpMethod(String image, Function onTap){
+  Widget signUpMethod(String image, String identifier){
     return GestureDetector(
-      onTap: onTap,
+      onTap: () async {
+        if(identifier == 'facebook'){
+          setState(() {
+            isLoading = true;
+          });
+          print('Checking Facebook...');
+          AuthController authFacebook = Get.find();
+          var hasException = await authFacebook.loginFacebook();
+          if(hasException != null){
+            setState(() {
+              isLoading = false;
+            });
+            getSnackbar(hasException);
+          }
+        }else if(identifier == 'google'){
+          setState(() {
+            isLoading = true;
+          });
+          print('Checking Google...');
+          AuthController authGoogle = Get.find();
+          var hasException = await authGoogle.handleGoogleSignIn();
+          if(hasException != null){
+            setState(() {
+              isLoading = false;
+            });
+            getSnackbar(hasException);
+          }
+        }
+      },
       child: Card(
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(111)),
@@ -213,4 +263,25 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  Widget footer() {
+    return RichText(
+      text: TextSpan(
+          text: StringResources.loginFooterTextNormal,
+          style: TextStyle(
+              color: Colors.black
+          ),
+          children: [
+            TextSpan(
+                recognizer: TapGestureRecognizer()..onTap = () => Get.to(RegisterPage()),
+                text: StringResources.loginFooterTextBold,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold
+                )
+            )
+          ]
+      ),
+    );
+  }
+
 }

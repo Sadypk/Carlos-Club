@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/general/view_model/profileScreen.dart';
-import 'package:flutter_app/member/view/memberCheckInHistory.dart';
-import 'package:flutter_app/member/view_model/memberHomeScreen.dart';
-import 'package:flutter_app/utils/appConst.dart';
-import 'package:flutter_app/utils/sizeConfig.dart';
+import 'package:flutter_app/main_app/getControllers/authController.dart';
+import 'package:flutter_app/main_app/resources/appConst.dart';
+import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
-import 'calenderView.dart';
+import 'package:image_picker/image_picker.dart';
+
+
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -15,10 +20,108 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
+
+  UserDataController userDataController = Get.find();
+  AuthController authController = Get.find();
+
+  bool edit = false;
+  final picker = ImagePicker();
+  File image;
+
+
+  void selectPic() async {
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickedFile != null) {
+          image = File(pickedFile.path);
+        } else {
+          print('No image selected.');
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+
+  getSnackbar(title,hasException){
+    Get.snackbar(
+      title,
+      hasException,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+      margin: EdgeInsets.only(left: sizeConfig.width * 10,
+          right: sizeConfig.width * 10,
+          bottom: sizeConfig.height * 15),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent,elevation: 0,),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FlatButton(
+              onPressed: () async {
+                setState(() {
+                  edit = !edit;
+                });
+                if(!edit){
+                  var data = UserModel(
+                    userID: userDataController.userData.value.userID,
+                    userGroupID: userDataController.userData.value.userGroupID,
+                    userName: userDataController.userData.value.userName,
+                    email: userDataController.userData.value.email,
+                    userPhoto: userDataController.userData.value.userPhoto,
+                    address: userDataController.userData.value.address,//change
+                    phoneNumber: userDataController.userData.value.phoneNumber,//change
+                    userType: userDataController.userData.value.userType,
+                    userLoginType: userDataController.userData.value.userLoginType,
+                    checkInData: userDataController.userData.value.checkInData,
+                    lastCheckIn: userDataController.userData.value.lastCheckIn,
+                    facebookID: userDataController.userData.value.facebookID,
+                    instagramID: userDataController.userData.value.instagramID,
+                  );
+                  var hasException = await authController.updateData(data,image);
+                  if(hasException ==null){
+                    setState(() {
+                      getSnackbar('Success','Profile Updated');
+                    });
+                  }else{
+                    getSnackbar('Error',hasException);
+                  }
+                }
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+              color: Colors.grey[400],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    edit ? Icons.save : Icons.edit,
+                    color: Colors.white,
+                    size: sizeConfig.getSize(20),
+                  ),
+                  SizedBox(width: sizeConfig.width * 10,),
+                  Text(
+                    edit ? 'Save' : 'Edit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: sizeConfig.getSize(18)
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
@@ -33,9 +136,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                  MemberHomeScreenViewModel.profilePic
-                              ),
+                              image: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+                             // image: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??MemberHomeScreenViewModel.profilePic) : FileImage(image),
                               fit: BoxFit.cover
                           )
                       ),
@@ -53,11 +155,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: CircleAvatar(
                       radius: sizeConfig.getSize(65),
                       backgroundColor: Colors.white,
-                      child: CircleAvatar(
-                        radius: sizeConfig.getSize(60),
-                        backgroundImage: CachedNetworkImageProvider(
-                            MemberHomeScreenViewModel.profilePic
-                        ),
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: sizeConfig.getSize(60),
+                            backgroundImage: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic) : FileImage(image)),
+                          if (edit) Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: selectPic,
+                              child: CircleAvatar(
+                                radius: sizeConfig.getSize(20),
+                                backgroundColor: Colors.white60,
+                                child: Icon(
+                                  Icons.camera
+                                ),
+                              ),
+                            ),
+                          ) else SizedBox(),
+                        ],
                       ),
                     ),
                   )
@@ -75,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          ProfileScreenRepo.firstName + '\n' + ProfileScreenRepo.lastName,
+                          userDataController.userData.value.userName??'Loading...',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: sizeConfig.getSize(22),
@@ -90,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: (){
-                            Get.dialog(Dialog(
+                            /*Get.dialog(Dialog(
                               child: Padding(
                                 padding: EdgeInsets.all(sizeConfig.getSize(20)),
                                 child: Row(
@@ -124,14 +242,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ],
                                 ),
                               ),
-                            ));
+                            ));*/
                           },
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '123',
+                                userDataController.userData.value.checkInData.isNull? '0':'${userDataController.userData.value.checkInData.length}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: sizeConfig.getSize(22),
@@ -139,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                  ProfileScreenRepo.checkIn,
+                                  StringResources.checkIn,
                                   style: TextStyle(
                                       fontSize: sizeConfig.getSize(18)
                                   )
@@ -160,7 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: ProfileScreenRepo.address,
+                        hintText: userDataController.userData.value.address??'Add Address',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -179,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: ProfileScreenRepo.email,
+                        hintText: userDataController.userData.value.email??'Loading...',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -198,7 +316,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: ProfileScreenRepo.phone,
+                        hintText: userDataController.userData.value.phoneNumber??'Add Phone',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -220,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                              hintText: ProfileScreenRepo.facebook,
+                              hintText: StringResources.facebook,
                               hintStyle: TextStyle(
                                 color: AppConst.chocolate,
                               ),
@@ -241,7 +359,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
-                              hintText: ProfileScreenRepo.instagram,
+                              hintText: StringResources.instagram,
                               hintStyle: TextStyle(
                                 color: AppConst.chocolate,
                               ),
@@ -266,6 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
 }
 
 class MyClip extends CustomClipper<Path>{

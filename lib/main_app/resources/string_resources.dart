@@ -22,7 +22,7 @@ class StringResources{
   static const String registrationTextFieldHintEmail = 'Email address';
   static const String registrationTextFieldHintPassword = 'Password';
   static const String registrationTextFieldHintConfirmPassword = 'Confirm password';
-  static const String registrationTsignUpMethodText = 'Sign up using ';
+  static const String registrationSignUpMethodText = 'Sign up using ';
   static const String registrationBtnRegister = 'Sign Up';
   static const String registrationFooterTextNormal = 'Already have an account?';
   static const String registrationFooterTextBold = 'Sign In';

@@ -16,7 +16,7 @@ class RoundedTextField extends StatelessWidget {
     @required this.controller,
     @required this.focusNode,
     this.obscureText = false
-});
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,25 +27,25 @@ class RoundedTextField extends StatelessWidget {
         controller: controller,
         focusNode: focusNode,
         style: TextStyle(
-          color: Color(0xff4D4F56)
+            color: Color(0xff4D4F56)
         ),
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(
-            color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey
+              color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey
           ),
           prefixIcon: Icon(
             icon,
             color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(111),
-            borderSide: BorderSide(
-              color: AppConst.green
-            )
+              borderRadius: BorderRadius.circular(111),
+              borderSide: BorderSide(
+                  color: AppConst.green
+              )
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(111)
+              borderRadius: BorderRadius.circular(111)
           ),
         ),
       ),

@@ -116,8 +116,8 @@ class CustomTextFormField extends StatelessWidget {
             decoration: InputDecoration(
               labelText: labelText + '${isRequired && focusNode.hasFocus ? ' *' : ''}',
               labelStyle: TextStyle(
-                color: focusNode.hasFocus ? Colors.green : Colors.grey,
-                fontSize: 22
+                  color: focusNode.hasFocus ? Colors.green : Colors.grey,
+                  fontSize: 22
               ),
               prefixIcon: Icon(
                 prefix,

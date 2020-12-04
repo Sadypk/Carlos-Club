@@ -1,16 +1,10 @@
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:get/get.dart';
 
-class UserProfileViewModel{
-  var _userModel = UserModel(
-    email: 'sadypk19@gmail.com',
-    userName: 'Sadypk',
-    userType: 'Admin',
-  ).obs;
+class UserDataController extends GetxController{
+  var userData = UserModel().obs;
+  RxBool rememberMe = false.obs;
 
-  UserModel get userModel => _userModel.value;
+  setRemember(value)=>rememberMe.value = value;
 
-  set userModel(UserModel value) {
-    _userModel.value = value;
-  }
 }
