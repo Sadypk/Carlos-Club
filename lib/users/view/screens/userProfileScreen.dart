@@ -20,6 +20,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
   bool edit = false;
   File image;
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+
+  _handleSave(){
+    var data = {
+      'address': addressController.text,
+    };
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: sizeConfig.height * 30,
                   ),
                   TextField(
-                    enabled: false,
+                    enabled: edit,
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
@@ -253,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   TextField(
-                    enabled: false,
+                    enabled: edit,
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
@@ -275,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: TextField(
-                          enabled: false,
+                          enabled: edit,
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(
@@ -296,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Expanded(
                         child: TextField(
-                          enabled: false,
+                          enabled: edit,
                           minLines: 1,
                           maxLines: 2,
                           decoration: InputDecoration(

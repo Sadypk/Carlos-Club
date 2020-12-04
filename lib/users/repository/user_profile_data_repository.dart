@@ -10,15 +10,19 @@ class UserProfileDataRepository{
   UserProfileViewModel userProfileViewModel = Get.put(UserProfileViewModel());
 
 
+  checkIn(){
+
+  }
+
   addNewUser(UserModel data){
     _collectionReference.add(data.toJson()).then((value) => logger.i(value)).catchError((e){logger.e(e);});
   }
 
-  updateUserData() async{
-    QuerySnapshot querySnapshot = await _collectionReference.where('email',isEqualTo: 'a@g.com').get();
+  updateUserData(Map<String, dynamic> data) async{
+    QuerySnapshot querySnapshot = await _collectionReference.where('email',isEqualTo: userProfileViewModel.userModel.email).get();
     logger.i(querySnapshot.docs[0].data());
     try{
-      querySnapshot.docs[0].reference.update({'userName': 'qqq'});
+      querySnapshot.docs[0].reference.update(data);
     }catch(e){
       logger.e(e);
     }
