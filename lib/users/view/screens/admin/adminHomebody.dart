@@ -1,13 +1,13 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/main_app/widgets/logoutDialog.dart';
+import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
 import 'package:flutter_app/users/models/demos.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
-import 'package:flutter_app/main_app/widgets/textField.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
+import 'package:flutter_app/main_app/widgets/text_field.dart';
 import 'package:get/get.dart';
 
 class AdminHomeBody extends StatefulWidget {

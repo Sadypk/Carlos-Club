@@ -1,7 +1,12 @@
 class StringResources{
 
   //Validator
-  // static const String loginHeaderText = 'Sign In';
+  static const String thisFieldIsRequired = 'This field is required';
+  static const String invalidName = 'Invalid name';
+  static const String passwordDoesNotMatch = 'Passwords do not match';
+  static const String pleaseEnterEmailText = 'Please enter your email address';
+  static const String pleaseEnterAValidEmailText = 'Please enter a valid email address';
+  static const String passwordMustBeSix = 'Password must be at least 6 characters long';
 
   //Splash Screen
   static const String splashScreenImage = 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png';

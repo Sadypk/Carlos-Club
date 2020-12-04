@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final GetSizeConfig sizeConfig = Get.find();
 
   UserDataController userDataController = Get.find();
-  AuthController authController = Get.find();
+  AuthRepository authController = Get.find();
 
   bool edit = false;
   final picker = ImagePicker();

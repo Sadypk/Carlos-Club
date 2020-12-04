@@ -1,13 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/authentication/view/registerPage.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/view/register_page.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/main_app/widgets/blueButton.dart';
+import 'package:flutter_app/main_app/widgets/blue_button.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
-import 'package:flutter_app/main_app/widgets/textField.dart';
+import 'package:flutter_app/main_app/widgets/text_field.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   final formKey = GlobalKey<FormState>();
-  AuthController authController = Get.find();
+  AuthRepository authController = Get.find();
   GetSizeConfig sizeConfig = Get.find();
 
   TextEditingController emailController = TextEditingController();
@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
             isLoading = true;
           });
           print('Checking Facebook...');
-          AuthController authFacebook = Get.find();
+          AuthRepository authFacebook = Get.find();
           var hasException = await authFacebook.loginFacebook();
           if(hasException != null){
             setState(() {
@@ -239,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
             isLoading = true;
           });
           print('Checking Google...');
-          AuthController authGoogle = Get.find();
+          AuthRepository authGoogle = Get.find();
           var hasException = await authGoogle.handleGoogleSignIn();
           if(hasException != null){
             setState(() {

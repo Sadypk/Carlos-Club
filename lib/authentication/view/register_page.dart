@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/main_app/widgets/blueButton.dart';
+import 'package:flutter_app/main_app/widgets/blue_button.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
-import 'package:flutter_app/main_app/widgets/textField.dart';
+import 'package:flutter_app/main_app/widgets/text_field.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
 
   final GetSizeConfig sizeConfig = Get.find();
-  final AuthController authController = Get.find();
+  final AuthRepository authController = Get.find();
   var logger = Logger();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -315,7 +315,7 @@ class _RegisterPageState extends State<RegisterPage> {
             isLoading = true;
           });
           print('Checking Facebook...');
-          AuthController authFacebook = Get.find();
+          AuthRepository authFacebook = Get.find();
           var hasException = await authFacebook.loginFacebook();
           if(hasException != null){
             setState(() {
@@ -337,7 +337,7 @@ class _RegisterPageState extends State<RegisterPage> {
             isLoading = true;
           });
           print('Checking Google...');
-          AuthController authGoogle = Get.find();
+          AuthRepository authGoogle = Get.find();
           var hasException = await authGoogle.handleGoogleSignIn();
           if(hasException != null){
             setState(() {

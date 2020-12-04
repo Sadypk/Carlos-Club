@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:get/get.dart';
 
 class LogoutDialog extends StatelessWidget {
 
   final GetSizeConfig sizeConfig = Get.find();
-  final AuthController authController = Get.find();
+  final AuthRepository authController = Get.find();
 
   @override
   Widget build(BuildContext context) {

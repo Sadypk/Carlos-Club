@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
-import 'package:flutter_app/authentication/view/loginPage.dart';
+import 'package:flutter_app/authentication/view/login_page.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/adminHomeScreen.dart';
@@ -15,7 +15,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 
-class AuthController extends GetxController {
+class AuthRepository extends GetxController {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseStorage storage = FirebaseStorage.instance;

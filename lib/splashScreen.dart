@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/authentication/view/loginPage.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/view/login_page.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -18,7 +18,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   GetStorage localStorage = GetStorage();
-  AuthController authController = Get.find();
+  AuthRepository authController = Get.find();
   UserDataController userDataController = Get.find();
   GetSizeConfig getSizeConfig = Get.find();
 

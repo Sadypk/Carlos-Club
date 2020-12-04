@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/users/models/demos.dart';
 import 'package:get/get.dart';
 import 'groupMemberDetails.dart';

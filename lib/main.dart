@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/main_app/getControllers/authController.dart';
-import 'package:flutter_app/main_app/resources/appConst.dart';
-import 'package:flutter_app/main_app/resources/sizeConfig.dart';
+import 'package:flutter_app/authentication/repository/auth_repository.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
+import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/splashScreen.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
@@ -20,7 +20,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(UserDataController());
-    Get.put(AuthController());
+    Get.put(AuthRepository());
     Get.put(GetSizeConfig());
 
     return GetMaterialApp(
