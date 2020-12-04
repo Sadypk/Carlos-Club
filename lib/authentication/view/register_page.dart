@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/main_app/util/validator.dart';
 import 'package:flutter_app/main_app/widgets/blue_button.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
@@ -218,6 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
             labelText: StringResources.registrationTextFieldHintName,
             icon: Icons.person_outline,
             controller: nameController,
+            validator: Validator().nameValidator,
           ),
           SizedBox(height: sizeConfig.height * 10,),
           RoundedTextField(
@@ -225,6 +227,7 @@ class _RegisterPageState extends State<RegisterPage> {
             labelText: StringResources.registrationTextFieldHintEmail,
             icon: Icons.email_outlined,
             controller: emailController,
+            validator: Validator().validateEmail,
           ),
           SizedBox(height: sizeConfig.height * 10,),
           RoundedTextField(
@@ -233,6 +236,7 @@ class _RegisterPageState extends State<RegisterPage> {
             icon: Icons.lock_outline,
             controller: passwordController,
             obscureText: true,
+            validator: Validator().validatePassword,
           ),
           SizedBox(height: sizeConfig.height * 10,),
           RoundedTextField(
@@ -241,6 +245,9 @@ class _RegisterPageState extends State<RegisterPage> {
             icon: Icons.lock_outline,
             controller: confPasswordController,
             obscureText: true,
+            validator: (v){
+              return Validator().validateConfirmPassword(passwordController.text, v);
+            },
           ),
           SizedBox(height: sizeConfig.height * 30,),
           signUpMethods(),

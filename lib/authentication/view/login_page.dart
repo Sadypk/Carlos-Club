@@ -5,6 +5,7 @@ import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/main_app/util/validator.dart';
 import 'package:flutter_app/main_app/widgets/blue_button.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
@@ -124,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: StringResources.loginTextFieldHintEmail,
             icon: Icons.email,
             controller: emailController,
+            validator: Validator().validateEmail,
           ),
           SizedBox(height: sizeConfig.height * 30,),
           RoundedTextField(
@@ -131,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
             labelText: StringResources.loginTextFieldHintPassword,
             icon: Icons.lock,
             controller: passwordController,
-            obscureText: true
+            obscureText: true,
+            validator: Validator().validateEmptyPassword,
           ),
           SizedBox(height: sizeConfig.height * 20,),
           rememberMe(),

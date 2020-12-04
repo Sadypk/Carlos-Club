@@ -45,6 +45,13 @@ class Validator {
     }
   }
 
+  String validateEmptyPassword(String value) {
+    if (value.isEmpty) {
+      return StringResources.pleaseEnterPasswordText;
+    }  else {
+      return null;
+    }
+  }
 
   String nameValidator(String value){
     Pattern pattern = '/[a-zA-Z]/i';
