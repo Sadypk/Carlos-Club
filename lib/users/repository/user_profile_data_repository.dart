@@ -50,7 +50,25 @@ class UserProfileDataRepository{
       logger.i(e);
       return e;
     }
+  }
 
+  checkIn(DateTime date) async {
+    var copy = userDataController.userData.value;
+    if(copy.checkInData.isEmpty){
+      copy.checkInData.insert(0, date);
+    }
+    try{
+      await databaseReference.collection("User").doc(copy.userID).update(copy.toJson());
+
+      bool session = localStorage.hasData('userValues');
+      print(session);
+      if(session){
+        updateSession();
+      }
+    }catch(e){
+      logger.i(e);
+      return e;
+    }
   }
 
   getUserData(email,userLoginType,rememberMe) async{

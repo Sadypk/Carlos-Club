@@ -5,6 +5,7 @@ import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
 import 'package:flutter_app/users/models/demos.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -93,12 +94,13 @@ class _HomeBodyState extends State<HomeBody> {
       padding: EdgeInsets.only(bottom: sizeConfig.height * 10),
       child: FlatButton(
         onPressed: () async{
-          String result = await Get.dialog(QRScanner());
-          if(result == 'success'){
-            checkInSuccessFull();
-          }else{
-            checkInFailed();
-          }
+          UserProfileDataRepository().checkIn(DateTime.now());
+          // String result = await Get.dialog(QRScanner());
+          // if(result == 'success'){
+          //   checkInSuccessFull();
+          // }else{
+          //   checkInFailed();
+          // }
         },
         color: AppConst.green,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(sizeConfig.width * 20)),
