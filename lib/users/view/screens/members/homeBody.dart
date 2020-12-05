@@ -9,9 +9,9 @@ import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:marquee/marquee.dart';
 
 import 'memberCheckInHistory.dart';
 
@@ -22,6 +22,7 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
+  UserDataController userDataController = Get.find();
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _HomeBodyState extends State<HomeBody> {
             ),
           ),
         ),
-        title: Text('Welcome: User Name'),
+        title: Text('Welcome: ${userDataController.userData.value.userName}'),
         elevation: 0,
         actions: [
           Padding(

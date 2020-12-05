@@ -121,6 +121,8 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         children: [
           RoundedTextField(
+            autoFocus: false,
+            readOnly: false,
             focusNode: emailNode,
             labelText: StringResources.loginTextFieldHintEmail,
             icon: Icons.email,
@@ -129,6 +131,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
           SizedBox(height: sizeConfig.height * 30,),
           RoundedTextField(
+            autoFocus: false,
+            readOnly: false,
             focusNode: passwordNode,
             labelText: StringResources.loginTextFieldHintPassword,
             icon: Icons.lock,

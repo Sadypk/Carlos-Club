@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_app/main_app/util/date_helper.dart';
 
 class UserModel{
   String userID;
   String userGroupID;
+
   String userName;
   String email;
   String userPhoto;
@@ -13,8 +13,8 @@ class UserModel{
   String userType;
   String userLoginType;
 
-  List<DateTime> checkInData;
-  DateTime lastCheckIn;
+  List<Timestamp> checkInData;
+  Timestamp lastCheckIn;
 
   String facebookID;
   String instagramID;
@@ -29,21 +29,10 @@ class UserModel{
     this.userLoginType,
     this.userGroupID,
     this.checkInData,
-    this.address,
-    this.facebookID,
-    this.instagramID,
-    this.lastCheckIn,
-    this.phoneNumber
+    this.address,this.facebookID,this.instagramID,this.lastCheckIn,this.phoneNumber
   });
 
   Map<String, dynamic> toJson(){
-    List<Timestamp> timestampList = [];
-    if(checkInData.isNotEmpty){
-      checkInData.forEach((v) {
-          timestampList.add(DateHelper().fromDateTimeToTimestamp(v));
-        }
-      );
-    }
     var data = {
       "userID" : userID??'',
       "userGroupID": userGroupID??'',
@@ -57,8 +46,8 @@ class UserModel{
       "userType": userType??'',
       "userLoginType": userLoginType??'',
 
-      "checkInData": timestampList,
-      "lastCheckIn": DateHelper().fromDateTimeToTimestamp(lastCheckIn)??'',
+      "checkInData": checkInData??[],
+      "lastCheckIn": lastCheckIn??'',
 
       "facebookID": facebookID??'',
       "instagramID": instagramID??'',
@@ -69,18 +58,28 @@ class UserModel{
 
   UserModel.fromJson(Map<String, dynamic> json){
     userID = json['userID'];
+    userGroupID = json['userGroupID'];
+
     userName = json['userName'];
     email = json['email'];
     userPhoto = json['userPhoto'];
+    address = json['address'];
+    phoneNumber = json['phoneNumber'];
+
     userType = json['userType'];
     userLoginType = json['userLoginType'];
-    userGroupID = json['userGroupID'];
-    // lastCheckIn = DateHelper().fromTimestampToDateTime(json['lastCheckIn']);
-    if(json['checkInLog']!=null){
-      checkInData = List<DateTime>();
-      json['checkInLog'].forEach((v){
-        checkInData.add(DateHelper().fromTimestampToDateTime(v));
+
+    if(json['checkInData']!=null){
+      checkInData = List<Timestamp>();
+      json['checkInData'].forEach((v){
+        checkInData.add(v);
       });
     }
+    lastCheckIn = json['lastCheckIn'];
+
+    facebookID = json['facebookID'];
+    instagramID = json['instagramID'];
   }
+
+
 }

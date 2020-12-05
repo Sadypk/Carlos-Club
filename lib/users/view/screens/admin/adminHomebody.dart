@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_app/users/models/demos.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 
 class AdminHomeBody extends StatefulWidget {
@@ -17,6 +20,8 @@ class AdminHomeBody extends StatefulWidget {
 
 class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
+
+  UserDataController userDataController = Get.find();
 
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -28,6 +33,13 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    focusNode.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
@@ -36,12 +48,10 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
           leading: Padding(
             padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
             child: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  StringResources.memberHomeScreenProfilePic
-              ),
+              backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
             ),
           ),
-          title: Text('Welcome: User Name'),
+          title: Text('Welcome: ${userDataController.userData.value.userName}'),
           elevation: 0,
           bottom: AppBar(
             backgroundColor: Colors.white,
@@ -138,6 +148,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       'Enter User Email :',
@@ -150,7 +161,9 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                                         labelText: 'User email',
                                         icon: Icons.email_outlined,
                                         controller: emailController,
-                                        focusNode: focusNode
+                                        focusNode: focusNode,
+                                      autoFocus: false,
+                                      readOnly: false,
                                     )
                                   ]
                               ),
