@@ -332,16 +332,6 @@ class AuthRepository extends GetxController {
     }
   }
 
-  sessionNavigation(String userLoginType) {
-    print(userDataController.userData.value.userLoginType);
-    if (userLoginType == 'google') {
-      sessionTypeIdentifier();
-    } else if (userLoginType == 'facebook') {
-      sessionTypeIdentifier();
-    } else {
-      sessionTypeIdentifier();
-    }
-  }
 
   sessionTypeIdentifier(){
     if(userDataController.userData.value.userType == 'member'){
@@ -349,16 +339,17 @@ class AuthRepository extends GetxController {
     }else{
       Get.offAll(AdminHomeScreen());
     }
+    addListenerFunction();
   }
 
   userTypeIdentify(){
-    UserProfileDataRepository().listenToData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
-    Future.delayed(Duration(milliseconds: 1000)).then((value){
-      if(userDataController.userData.value.userType == 'member'){
-        Get.offAll(MemberHomeScreen());
-      }else{
-        Get.offAll(AdminHomeScreen());
-      }
+    addListenerFunction();
+      Future.delayed(Duration(milliseconds: 1000)).then((value){
+      sessionTypeIdentifier();
     });
+  }
+
+  addListenerFunction(){
+    UserProfileDataRepository().listenToData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
   }
 }

@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     bool session = localStorage.hasData('userValues');
     if (session) {
       userDataController.userData.value = UserModel.fromJson(localStorage.read('userValues'));
-      Future.delayed(Duration(seconds: 3), () => authController.sessionNavigation(userDataController.userData.value.userLoginType));
+      Future.delayed(Duration(seconds: 3), () => authController.sessionTypeIdentifier());
     } else {
       print('Session Availability: $session');
       Future.delayed(Duration(seconds: 3), () => Get.off(LoginPage()));

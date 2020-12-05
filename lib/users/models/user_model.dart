@@ -58,17 +58,26 @@ class UserModel{
 
   UserModel.fromJson(Map<String, dynamic> json){
     userID = json['userID'];
+    userGroupID = json['userGroupID'];
+
     userName = json['userName'];
     email = json['email'];
     userPhoto = json['userPhoto'];
+    address = json['address'];
+    phoneNumber = json['phoneNumber'];
+
     userType = json['userType'];
     userLoginType = json['userLoginType'];
-    userGroupID = json['userGroupID'];
-    if(json['checkInLog']!=null){
+
+    if(json['checkInData']!=null){
       checkInData = List<Timestamp>();
-      json['checkInLog'].forEach((v){
+      json['checkInData'].forEach((v){
         checkInData.add(v);
       });
     }
+    lastCheckIn = json['lastCheckIn'];
+
+    facebookID = json['facebookID'];
+    instagramID = json['instagramID'];
   }
 }
