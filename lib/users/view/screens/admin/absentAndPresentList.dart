@@ -41,7 +41,8 @@ class AbsentAndPresentListScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
         contentPadding: EdgeInsets.all(8),
-        onTap: (){Get.to(GroupMemberDetailsScreen(), arguments: data);},
+        onTap: (){
+          Get.to(GroupMemberDetailsScreen(), arguments: data);},
         leading: CircleAvatar(
           radius: sizeConfig.getSize(30),
           backgroundImage: CachedNetworkImageProvider(

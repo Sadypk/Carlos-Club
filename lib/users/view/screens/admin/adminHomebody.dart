@@ -46,9 +46,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
           leading: Padding(
             padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
             child: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  StringResources.memberHomeScreenProfilePic
-              ),
+              backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
             ),
           ),
           title: Text('Welcome: ${userDataController.userData.value.userName}'),
@@ -148,6 +146,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       'Enter User Email :',
@@ -160,7 +159,9 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                                         labelText: 'User email',
                                         icon: Icons.email_outlined,
                                         controller: emailController,
-                                        focusNode: focusNode
+                                        focusNode: focusNode,
+                                      autoFocus: false,
+                                      readOnly: false,
                                     )
                                   ]
                               ),

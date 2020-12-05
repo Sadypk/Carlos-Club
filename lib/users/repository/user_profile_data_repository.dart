@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
+import 'package:flutter_app/users/models/group_model.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class UserProfileDataRepository{
 
   final databaseReference = FirebaseFirestore.instance;
   CollectionReference user = FirebaseFirestore.instance.collection('User');
+  CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
   addNewUser(UserModel data) async {
@@ -62,13 +64,22 @@ class UserProfileDataRepository{
 
         QuerySnapshot querySnapshot2 = await user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).get();
         userDataController.userData.value = UserModel.fromJson(querySnapshot2.docChanges[0].doc.data());
-        userDataController.setRemember(rememberMe);
+
+         if(userDataController.userData.value.userGroupID != null){
+           getGroupData(userDataController.userData.value.userGroupID);
+         }
 
         if(rememberMe){
           updateSession();
         }
         return 'user Found';
       }
+  }
+
+  getGroupData(groupID) async {
+    Query query = group.where('userGroupID',isEqualTo: groupID);
+    QuerySnapshot querySnapshot = await query.get();
+    userDataController.groupData.value = GroupModel.fromJson(querySnapshot.docChanges[0].doc.data());
   }
 
   listenToData(email,userLoginType){
