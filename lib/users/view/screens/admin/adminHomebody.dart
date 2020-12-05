@@ -142,58 +142,54 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                     height: sizeConfig.height * 300,
                     child: TabBarView(
                       children: [
-                        Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Enter User Email :',
-                                      style: TextStyle(
-                                          fontSize: sizeConfig.getSize(24)
-                                      ),
-                                    ),
-                                    SizedBox(height: sizeConfig.height * 20,),
-                                    RoundedTextField(
-                                        labelText: 'User email',
-                                        icon: Icons.email_outlined,
-                                        controller: emailController,
-                                        focusNode: focusNode
-                                    )
-                                  ]
-                              ),
-                            )
-                        ),
-                        Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemCount: demoGroupMembers.length,
-                              itemBuilder: (_, index){
-                                DemoUsersModel user = demoGroupMembers[index];
-                                return Card(
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: CachedNetworkImageProvider(
-                                          user.image
-                                      ),
-                                    ),
-                                    title: Text(
-                                      user.fName + ' ' + user.lName
-                                    ),
-                                    trailing: IconButton(
-                                        onPressed: (){
-                                          Get.back();
-                                          dialog('Success', '${user.fName + ' ' + user.lName} has been added to your group');
-                                        },
-                                        icon: Icon(Icons.add)
-                                    ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Enter User Email :',
+                                  style: TextStyle(
+                                      fontSize: sizeConfig.getSize(24)
                                   ),
-                                );
-                              },
-                            )
+                                ),
+                                SizedBox(height: sizeConfig.height * 20,),
+                                RoundedTextField(
+                                  labelText: 'User email',
+                                  icon: Icons.email_outlined,
+                                  controller: emailController,
+                                  focusNode: focusNode
+                                )
+                              ]
+                          ),
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: demoGroupMembers.length,
+                          itemBuilder: (_, index){
+                            DemoUsersModel user = demoGroupMembers[index];
+                            return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      user.image
+                                  ),
+                                ),
+                                title: Text(
+                                  user.fName + ' ' + user.lName
+                                ),
+                                trailing: IconButton(
+                                    onPressed: (){
+                                      Get.back();
+                                      dialog('Success', '${user.fName + ' ' + user.lName} has been added to your group');
+                                    },
+                                    icon: Icon(Icons.add)
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
