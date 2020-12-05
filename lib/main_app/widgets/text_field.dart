@@ -73,7 +73,7 @@ class RoundedTextField extends StatelessWidget {
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
         autofocus: autoFocus,
-        maxLines: maxLines,
+        //maxLines: maxLines,
         autovalidateMode: autoValidateMode,
         keyboardType: keyboardType,
         validator:

@@ -8,6 +8,7 @@ import 'package:flutter_app/users/models/demos.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 
 class AdminHomeBody extends StatefulWidget {
@@ -18,6 +19,8 @@ class AdminHomeBody extends StatefulWidget {
 class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
 
+  UserDataController userDataController = Get.find();
+
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
 
@@ -25,6 +28,13 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
   void initState() {
     super.initState();
     focusNode.addListener(() {setState(() {});});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    focusNode.dispose();
   }
 
   @override
@@ -41,7 +51,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
               ),
             ),
           ),
-          title: Text('Welcome: User Name'),
+          title: Text('Welcome: ${userDataController.userData.value.userName}'),
           elevation: 0,
           bottom: AppBar(
             backgroundColor: Colors.white,
