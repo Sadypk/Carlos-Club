@@ -350,6 +350,7 @@ class AuthRepository extends GetxController {
   }
 
   addListenerFunction(){
-    UserProfileDataRepository().listenToData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
+    UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
+    //UserProfileDataRepository().listenToGroupData(userDataController.userData.value.userGroupID);
   }
 }

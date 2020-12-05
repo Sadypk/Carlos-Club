@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/users/models/group_model.dart';
@@ -68,7 +70,6 @@ class UserProfileDataRepository{
          if(userDataController.userData.value.userGroupID != null){
            getGroupData(userDataController.userData.value.userGroupID);
          }
-
         if(rememberMe){
           updateSession();
         }
@@ -77,17 +78,25 @@ class UserProfileDataRepository{
   }
 
   getGroupData(groupID) async {
-    Query query = group.where('userGroupID',isEqualTo: groupID);
-    QuerySnapshot querySnapshot = await query.get();
-    userDataController.groupData.value = GroupModel.fromJson(querySnapshot.docChanges[0].doc.data());
+    DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
+    userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
   }
 
-  listenToData(email,userLoginType){
-    user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).snapshots().listen((value) {
-      userDataController.userData.value = UserModel.fromJson(value.docChanges[0].doc.data());
-      print('listening to user modeling...');
+  listenToGroupData(groupID){
+    group.doc(groupID).snapshots().listen((value) {
+      userDataController.groupData.value = GroupModel.fromJson(value.data());
+      print('listening to group model...');
     });
   }
+
+  listenToUserData(email,userLoginType){
+    user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).snapshots().listen((value) {
+      userDataController.userData.value = UserModel.fromJson(value.docChanges[0].doc.data());
+      print('listening to user model...');
+    });
+  }
+
+
 
   updateSession(){
     print('updating cookies...');

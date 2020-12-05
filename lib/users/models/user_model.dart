@@ -80,4 +80,6 @@ class UserModel{
     facebookID = json['facebookID'];
     instagramID = json['instagramID'];
   }
+
+
 }

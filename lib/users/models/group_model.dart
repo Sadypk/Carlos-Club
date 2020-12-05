@@ -1,83 +1,33 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class GroupModel{
-  String userID;
-  String userGroupID;
-
-  String userName;
-  String email;
-  String userPhoto;
-  String address;
-  String phoneNumber;
-
-  String userType;
-  String userLoginType;
-
-  List<Timestamp> checkInData;
-  Timestamp lastCheckIn;
-
-  String facebookID;
-  String instagramID;
-
+  String groupName;
+  List<String> members;
+  String theme;
 
   GroupModel({
-    this.userID,
-    this.userName,
-    this.email,
-    this.userPhoto,
-    this.userType,
-    this.userLoginType,
-    this.userGroupID,
-    this.checkInData,
-    this.address,this.facebookID,this.instagramID,this.lastCheckIn,this.phoneNumber
+    this.groupName,
+    this.theme,
+    this.members
   });
 
   Map<String, dynamic> toJson(){
     var data = {
-      "userID" : userID??'',
-      "userGroupID": userGroupID??'',
-
-      "userName": userName??'',
-      "email": email??'',
-      "userPhoto": userPhoto??'',
-      "address": address??'',
-      "phoneNumber": phoneNumber??'',
-
-      "userType": userType??'',
-      "userLoginType": userLoginType??'',
-
-      "checkInData": checkInData??[],
-      "lastCheckIn": lastCheckIn??'',
-
-      "facebookID": facebookID??'',
-      "instagramID": instagramID??'',
+      "groupName" : groupName??'',
+      "theme": theme??'',
+      "members": members??[],
 
     };
     return data;
   }
 
   GroupModel.fromJson(Map<String, dynamic> json){
-    userID = json['userID'];
-    userGroupID = json['userGroupID'];
+    groupName = json['groupName'];
+    theme = json['theme'];
 
-    userName = json['userName'];
-    email = json['email'];
-    userPhoto = json['userPhoto'];
-    address = json['address'];
-    phoneNumber = json['phoneNumber'];
-
-    userType = json['userType'];
-    userLoginType = json['userLoginType'];
-
-    if(json['checkInData']!=null){
-      checkInData = List<Timestamp>();
-      json['checkInData'].forEach((v){
-        checkInData.add(v);
+    if(json['members']!=null){
+      members = List<String>();
+      json['members'].forEach((v){
+        members.add(v);
       });
     }
-    lastCheckIn = json['lastCheckIn'];
-
-    facebookID = json['facebookID'];
-    instagramID = json['instagramID'];
   }
 }
