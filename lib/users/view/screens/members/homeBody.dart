@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -22,6 +23,7 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
   UserDataController userDataController = Get.find();
+  UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
 
   @override
   void initState() {
@@ -96,6 +98,8 @@ class _HomeBodyState extends State<HomeBody> {
         onPressed: () async{
           String result = await Get.dialog(QRScanner());
           if(result == 'success'){
+            Timestamp timestamp = Timestamp.now();
+            userProfileDataRepository.userCheckIn(timestamp);
             checkInSuccessFull();
           }else{
             checkInFailed();

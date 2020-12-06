@@ -332,7 +332,6 @@ class AuthRepository extends GetxController {
     }
   }
 
-
   sessionTypeIdentifier(){
     if(userDataController.sessionData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());

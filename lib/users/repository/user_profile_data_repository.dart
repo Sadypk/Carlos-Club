@@ -24,9 +24,21 @@ class UserProfileDataRepository{
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
+  userCheckIn(timestamp) async {
+    try{
+      user.doc(userDataController.userData.value.userID).update({
+          'checkInData' : timestamp,
+        }
+      );
+    }catch(e){
+      logger.i(e);
+      return e;
+    }
+  }
+
   addNewUser(UserModel data) async {
     try{
-      await databaseReference.collection("User").doc(data.userID).set(data.toJson());
+      await user.doc(data.userID).set(data.toJson());
     }catch(e){
       logger.i(e);
       return e;
@@ -44,7 +56,7 @@ class UserProfileDataRepository{
 
   updateUserData(UserModel data) async {
     try{
-      await databaseReference.collection("User").doc(data.userID).update(data.toJson());
+      await user.doc(data.userID).update(data.toJson());
 
       bool session = localStorage.hasData('userValues');
       print(session);
