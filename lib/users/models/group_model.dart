@@ -14,7 +14,6 @@ class GroupModel{
       "groupName" : groupName??'',
       "theme": theme??'',
       "members": members??[],
-
     };
     return data;
   }

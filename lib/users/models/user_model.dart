@@ -70,7 +70,9 @@ class UserModel{
     userLoginType = json['userLoginType'];
 
     if(json['checkInData']!=null){
+
       checkInData = List<Timestamp>();
+
       json['checkInData'].forEach((v){
         checkInData.add(v);
       });

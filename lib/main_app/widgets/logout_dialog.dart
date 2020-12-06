@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class LogoutDialog extends StatelessWidget {
 
   final GetSizeConfig sizeConfig = Get.find();
   final AuthRepository authController = Get.find();
+  final GetStorage localStorage = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,8 @@ class LogoutDialog extends StatelessWidget {
                   child: InkWell(
                     onTap: (){
                       authController.signOut();
+                      localStorage.remove('userValues');
+                      localStorage.erase();
                     },
                     child: Container(
                       decoration: BoxDecoration(

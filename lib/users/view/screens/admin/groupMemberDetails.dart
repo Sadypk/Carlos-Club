@@ -1,14 +1,15 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/users/models/demos.dart';
+import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
-import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/users/view/screens/members/memberCheckInHistory.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
-import 'package:flutter_app/main_app/widgets/text_field.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -19,15 +20,18 @@ class GroupMemberDetailsScreen extends StatefulWidget {
 
 class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   final GetSizeConfig sizeConfig = Get.find();
-  DemoUsersModel data = Get.arguments;
+  UserModel data;
 
+  UserDataController userDataController = Get.find();
   TextEditingController emailController = TextEditingController();
+  UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
   FocusNode focusNode;
 
   @override
   void initState() {
     super.initState();
     focusNode = FocusNode()..addListener(() {setState(() {});});
+    data = Get.arguments;
   }
 
   @override
@@ -40,38 +44,40 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
               padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
               child: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  data.image
+                  data.userPhoto
                 ),
               ),
             ),
-            Text(data.fName + ' ' + data.lName),
+            Text(data.userName),
           ],
         ),
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: sizeConfig.width * 80
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: sizeConfig.height * 15,),
-              qrScanners(),
-              Divider(
-                color: Colors.grey,
-                thickness: 1.5,
-                height: sizeConfig.height * 30,
-              ),
-              attendenceList(),
-            ],
+      body: Obx((){
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: sizeConfig.width * 80
           ),
-        ),
-      ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: sizeConfig.height * 15,),
+                manualCheckInButton(),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.5,
+                  height: sizeConfig.height * 30,
+                ),
+                attendanceList(),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 
-  Widget qrScanners() {
+  Widget manualCheckInButton() {
     return Padding(
       padding: EdgeInsets.only(bottom: sizeConfig.height * 10),
       child: FlatButton(
@@ -106,12 +112,6 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                RoundedTextField(
-                  labelText: 'User email',
-                  icon: Icons.email_outlined,
-                  controller: emailController,
-                  focusNode: focusNode
-                ),
                 Container(
                   height: sizeConfig.height * 80,
                   padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30),
@@ -187,7 +187,15 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
           },
         ),
         btnOkOnPress: (){
-          checkInSuccessFull();
+         if(selectedTime != null && selectedDate != null){
+           String mAlertDateTime = selectedDate + " " + selectedTime;
+           DateFormat  dft = DateFormat("dd/MM/yyyy HH:mm a");
+           DateTime finalDate = dft.parse(mAlertDateTime);
+           Timestamp timestamp = Timestamp.fromDate(finalDate);
+
+           userProfileDataRepository.userCheckIn(data.userID,timestamp);
+           checkInSuccessful();
+         }
         },
         btnCancelOnPress: (){
           checkInFailed();
@@ -195,7 +203,8 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
     )..show();
   }
 
-  Widget attendenceList() {
+  Widget attendanceList() {
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -218,14 +227,13 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
           ),
           child: Column(
             children: [
-              ListView.builder(
-                itemCount: demoCheckInData.length > 10 ? 10 :  demoCheckInData.length,
+              data.checkInData.isEmpty?Container(child: Text('No Check-In History'),):ListView.builder(
+                itemCount: data.checkInData.length > 10 ? 10 :  data.checkInData.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: sizeConfig.height * 10),
                 itemBuilder: listItem,
               ),
-              demoCheckInData.length > 10 ?
-              InkWell(
+              data.checkInData.isEmpty?SizedBox(): data.checkInData.length > 10 ?InkWell(
                 onTap: () => Get.to(MemberCheckInHistory()),
                 child: Text(
                   StringResources.memberHomeScreenBtnSeeAll,
@@ -235,9 +243,8 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
                       decoration: TextDecoration.underline
                   ),
                 ),
-              ) :
-              SizedBox(),
-              Padding(
+              ):Container(),
+              data.checkInData.isEmpty?Container():Padding(
                 padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(7)),
                 child: OutlineButton(
                   onPressed: (){
@@ -273,8 +280,10 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
     );
   }
 
+
   Widget listItem(BuildContext context, int index) {
-    DemoCheckInModel data = demoCheckInData[index];
+    //DemoCheckInModel data = demoCheckInData[index];
+    Timestamp timestamp = data.checkInData[index];
     return Padding(
       padding:  EdgeInsets.only(
         bottom: sizeConfig.height * 15,
@@ -286,7 +295,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            data.date,
+            DateFormat('dd MMM yyyy').format(timestamp.toDate()),
             style: TextStyle(
                 fontSize: sizeConfig.getSize(18)
             ),
@@ -297,12 +306,12 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
               ),
               child: Container(
                 color: Colors.grey,
-                width: sizeConfig.width * 300,
+                width: sizeConfig.width * 200,
                 height: 2,
               )
           ),
           Text(
-              data.time,
+              DateFormat().add_jms().format(timestamp.toDate()),
               style: TextStyle(
                   fontSize: sizeConfig.getSize(18),
                   color: Colors.green
@@ -314,17 +323,19 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   }
 
   void showCalenderZView() {
-    Get.dialog(Dialog(child: CalenderView(),));
+    Get.dialog(Dialog(child: CalenderView(checkInData: data.checkInData,)));
   }
 
-  void checkInSuccessFull() {
+  void checkInSuccessful() {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.SUCCES,
       animType: AnimType.TOPSLIDE,
       title: 'Success',
       desc: 'Check In at ${DateFormat('dd MMM').add_jms().format(DateTime.now())}',
-      btnOkOnPress: () {},
+      btnOkOnPress: () {
+        Get.back(result: true);
+      },
     )..show();
   }
 
@@ -335,22 +346,23 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
       animType: AnimType.BOTTOMSLIDE,
       title: 'Error',
       desc: 'Check In failed',
-      btnCancelOnPress: () {},
+      btnCancelOnPress: () {
+
+      },
     )..show();
   }
 
   selectDate() async{
-    DateTime dateTime = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2019),
-      lastDate: DateTime.now(),
-    );
 
-    if(dateTime==null){
+    print(data.checkInData);
+
+    DateTime date = await Get.dialog(Dialog(child: CalenderView(checkInData: data.checkInData),),arguments: true);
+    print(date);
+
+    if(date==null){
       return null;
     }else{
-      return DateFormat('dd/MM/yyyy').format(dateTime);
+      return DateFormat('dd/MM/yyyy').format(date);
     }
 
   }

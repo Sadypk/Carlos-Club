@@ -6,7 +6,9 @@ import 'package:flutter_app/authentication/view/login_page.dart';
 import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/users/models/userSessionModel.dart';
 import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -42,7 +44,9 @@ class _SplashScreenState extends State<SplashScreen> {
     print(localStorage.read('userValues'));
     bool session = localStorage.hasData('userValues');
     if (session) {
-      userDataController.userData.value = UserModel.fromJson(localStorage.read('userValues'));
+      userDataController.sessionData.value = UserSessionModel.fromJson(localStorage.read('userValues'));
+      UserProfileDataRepository().getUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType,true);
+
       Future.delayed(Duration(seconds: 3), () => authController.sessionTypeIdentifier());
     } else {
       print('Session Availability: $session');

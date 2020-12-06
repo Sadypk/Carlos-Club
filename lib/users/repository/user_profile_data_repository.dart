@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/users/models/group_model.dart';
+import 'package:flutter_app/users/models/userSessionModel.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
+
+import 'groupMemberData.dart';
 
 class UserProfileDataRepository{
   var logger = Logger();
@@ -15,16 +18,33 @@ class UserProfileDataRepository{
   UserModel userModel = UserModel();
   GetStorage localStorage = GetStorage();
 
+  RepoGroupMembers repoGroupMembers = RepoGroupMembers();
   UserDataController userDataController = Get.find();
 
-  final databaseReference = FirebaseFirestore.instance;
   CollectionReference user = FirebaseFirestore.instance.collection('User');
-  CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
+
+  userCheckIn(userID,timestamp) async {
+    try{
+      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp]),'lastCheckIn': timestamp});
+
+      user.snapshots().listen((value) {
+        print('listening to manual...');
+        userDataController.groupMemberData.clear();
+        value.docs.forEach((element) {
+          userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
+        });
+      });
+
+    }catch(e){
+      logger.i(e);
+      return e;
+    }
+  }
 
   addNewUser(UserModel data) async {
     try{
-      await databaseReference.collection("User").doc(data.userID).set(data.toJson());
+      await user.doc(data.userID).set(data.toJson());
     }catch(e){
       logger.i(e);
       return e;
@@ -40,16 +60,26 @@ class UserProfileDataRepository{
     }
   }
 
+  checkExistingFacebookEmail(email,userLoginType) async {
+    Query query = user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType);
+    QuerySnapshot querySnapshot = await query.get();
+    if(querySnapshot.docs.isEmpty){
+      return null;
+    }else{
+      return 'facebook account available';
+    }
+  }
 
   updateUserData(UserModel data) async {
     try{
-      await databaseReference.collection("User").doc(data.userID).update(data.toJson());
+      await user.doc(data.userID).update(data.toJson());
 
       bool session = localStorage.hasData('userValues');
-      print(session);
+
       if(session){
         updateSession();
       }
+
     }catch(e){
       logger.i(e);
       return e;
@@ -85,26 +115,16 @@ class UserProfileDataRepository{
         QuerySnapshot querySnapshot2 = await user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).get();
         userDataController.userData.value = UserModel.fromJson(querySnapshot2.docChanges[0].doc.data());
 
-         if(userDataController.userData.value.userGroupID != null){
-           getGroupData(userDataController.userData.value.userGroupID);
+        if(userDataController.userData.value.userGroupID != null){
+          repoGroupMembers.getGroupData(userDataController.userData.value.userGroupID);
          }
+
         if(rememberMe){
+          updateSessionModel();
           updateSession();
         }
         return 'user Found';
       }
-  }
-
-  getGroupData(groupID) async {
-    DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
-    userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
-  }
-
-  listenToGroupData(groupID){
-    group.doc(groupID).snapshots().listen((value) {
-      userDataController.groupData.value = GroupModel.fromJson(value.data());
-      print('listening to group model...');
-    });
   }
 
   listenToUserData(email,userLoginType){
@@ -114,21 +134,20 @@ class UserProfileDataRepository{
     });
   }
 
-
+  updateSessionModel(){
+    var sessionData =  UserSessionModel(
+        email: userDataController.userData.value.email,
+        userLoginType:  userDataController.userData.value.userLoginType,
+        userType:  userDataController.userData.value.userType,
+        userGroupID: userDataController.userData.value.userGroupID
+    );
+    userDataController.sessionData.value = sessionData;
+  }
 
   updateSession(){
     print('updating cookies...');
-    localStorage.write('userValues',userDataController.userData.value);
+    localStorage.write('userValues',userDataController.sessionData.value);
     print(localStorage.read('userValues'));
   }
 
-  checkExistingFacebookEmail(email,userLoginType) async {
-    Query query = user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType);
-    QuerySnapshot querySnapshot = await query.get();
-    if(querySnapshot.docs.isEmpty){
-      return null;
-    }else{
-      return 'facebook account available';
-    }
-  }
 }

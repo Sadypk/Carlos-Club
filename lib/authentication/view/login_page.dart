@@ -23,8 +23,8 @@ class _LoginPageState extends State<LoginPage> {
   AuthRepository authController = Get.find();
   GetSizeConfig sizeConfig = Get.find();
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController(text: 's@gmail.com');
+  TextEditingController passwordController = TextEditingController(text: '123456');
 
 
   FocusNode emailNode;

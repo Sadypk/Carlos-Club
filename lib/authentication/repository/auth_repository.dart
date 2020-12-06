@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/authentication/view/login_page.dart';
 import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/repository/groupMemberData.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/adminHomeScreen.dart';
 import 'package:flutter_app/users/view/screens/members/memberHomeScreen.dart';
@@ -333,24 +334,39 @@ class AuthRepository extends GetxController {
   }
 
 
-  sessionTypeIdentifier(){
+  userTypeIdentify(){
+    Future.delayed(Duration(milliseconds: 1000)).then((value){
+      userTypeIdentifier();
+    });
+  }
+
+  userTypeIdentifier() async{
     if(userDataController.userData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
     }
-    addListenerFunction();
+    addLoginListenerFunction();
   }
 
-  userTypeIdentify(){
-    addListenerFunction();
-      Future.delayed(Duration(milliseconds: 1000)).then((value){
-      sessionTypeIdentifier();
-    });
+  addLoginListenerFunction() async {
+    await UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
+    await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
   }
 
-  addListenerFunction(){
-    UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
-    //UserProfileDataRepository().listenToGroupData(userDataController.userData.value.userGroupID);
+
+  sessionTypeIdentifier() async {
+    if(userDataController.sessionData.value.userType == 'member'){
+      Get.offAll(MemberHomeScreen());
+    }else{
+      Get.offAll(AdminHomeScreen());
+    }
+    addSessionListenerFunction();
+  }
+
+
+  addSessionListenerFunction() async {
+    await UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
+    await RepoGroupMembers().listenToGroupData(userDataController.sessionData.value.userGroupID);
   }
 }
