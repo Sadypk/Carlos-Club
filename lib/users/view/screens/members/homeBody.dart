@@ -95,7 +95,7 @@ class _HomeBodyState extends State<HomeBody> {
       padding: EdgeInsets.only(bottom: sizeConfig.height * 10),
       child: FlatButton(
         onPressed: () async{
-          UserProfileDataRepository().checkIn(DateTime.now());
+          // UserProfileDataRepository().checkIn(DateTime.now());
           // String result = await Get.dialog(QRScanner());
           // if(result == 'success'){
           //   checkInSuccessFull();

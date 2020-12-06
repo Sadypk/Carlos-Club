@@ -126,7 +126,7 @@ class AuthRepository extends GetxController {
   addUserToDatabase(name, email, userPhoto, userType, loginType, userID) async {
     try {
       DateTime staticTime = DateTime(2020, 1, 1, 12, 1, 1, 1, 1);
-      // Timestamp timestamp = Timestamp.fromDate(staticTime);
+      Timestamp timestamp = Timestamp.fromDate(staticTime);
 
 
       //DateTime dateNow = now.toDate(); //TimeStamp to Date
@@ -142,7 +142,7 @@ class AuthRepository extends GetxController {
         userType: userType,
         userLoginType: loginType,
         checkInData: [],
-        lastCheckIn: staticTime,
+        lastCheckIn: timestamp,
         facebookID: '',
         instagramID: '',
       );
