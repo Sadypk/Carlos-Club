@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/authentication/view/login_page.dart';
 import 'package:flutter_app/users/models/user_model.dart';
+import 'package:flutter_app/users/repository/groupMemberData.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/adminHomeScreen.dart';
 import 'package:flutter_app/users/view/screens/members/memberHomeScreen.dart';
@@ -350,6 +351,6 @@ class AuthRepository extends GetxController {
 
   addListenerFunction(){
     UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
-    UserProfileDataRepository().listenToGroupData(userDataController.sessionData.value.userGroupID);
+    RepoGroupMembers().listenToGroupData(userDataController.sessionData.value.userGroupID);
   }
 }

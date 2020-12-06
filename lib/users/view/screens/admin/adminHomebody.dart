@@ -21,15 +21,16 @@ class AdminHomeBody extends StatefulWidget {
 
 class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
+  UserDataController userDataController = Get.find();
 
   UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
-  UserDataController userDataController = Get.find();
+  RepoGroupMembers repoGroupMembers = RepoGroupMembers();
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
 
 
   getData() async{
-    await RepoGroupMembers.getMembersInformation();
+    await repoGroupMembers.getMembersInformation();
   }
 
   @override
@@ -178,9 +179,9 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                         ListView.builder(
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
-                          itemCount: UserDataController.ungroupMemberData.length,
+                          itemCount: userDataController.ungroupMemberData.length,
                           itemBuilder: (_, index){
-                          var data = UserDataController.ungroupMemberData[index];
+                          var data = userDataController.ungroupMemberData[index];
                               return Card(
                               child: ListTile(
                                 leading: CircleAvatar(

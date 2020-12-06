@@ -18,8 +18,10 @@ class AbsentAndPresentListScreen extends StatefulWidget {
 
 class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen> {
   final GetSizeConfig sizeConfig = Get.find();
+  UserDataController userDataController = Get.find();
 
   UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
+  RepoGroupMembers repoGroupMembers = RepoGroupMembers();
 
   List<UserModel> presentUser = [];
 
@@ -27,16 +29,16 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
 
   bool loading = true;
   getData() async{
-    await RepoGroupMembers.getGroupMemberData();
+    await repoGroupMembers.getGroupMemberData();
 
-    UserDataController.groupMemberData.forEach((user) {
+    userDataController.groupMemberData.forEach((user) {
       user.checkInData.forEach((checkIn) {
         if(DateFormat('dd-MM-yy').format(DateTime.now()) == DateFormat('dd-MM-yy').format(checkIn.toDate())){
           presentUser.add(user);
         }
       });
     });
-    absentUser.addAll(UserDataController.groupMemberData.where((element) => !presentUser.contains(element)).toList());
+    absentUser.addAll(userDataController.groupMemberData.where((element) => !presentUser.contains(element)).toList());
 
     setState(() {
       loading = false;

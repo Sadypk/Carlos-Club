@@ -1,26 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/users/models/group_model.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 
-class RepoGroupMembers{
-static UserDataController userDataController = Get.find();
-  static final CollectionReference user = FirebaseFirestore.instance.collection('User');
+class RepoGroupMembers {
+  UserDataController userDataController = Get.find();
+  final CollectionReference group =
+      FirebaseFirestore.instance.collection('Groups');
+  final CollectionReference user =
+      FirebaseFirestore.instance.collection('User');
 
-  static  getGroupMemberData() async{
-    QuerySnapshot documents = await user.where('userGroupID',isEqualTo: userDataController.userData.value.userGroupID).get();
+  getGroupMemberData() async {
+    QuerySnapshot documents = await user
+        .where('userGroupID',
+            isEqualTo: userDataController.userData.value.userGroupID)
+        .get();
     documents.docs.forEach((element) {
-      UserDataController.groupMemberData.add(UserModel.fromJson(element.data()));
+      userDataController.groupMemberData
+          .add(UserModel.fromJson(element.data()));
     });
-}
+  }
 
+  getMembersInformation() async {
+    QuerySnapshot querySnapshot =
+        await user.where('userGroupID', isEqualTo: "").get();
 
-  static getMembersInformation() async {
-  QuerySnapshot querySnapshot = await user.where('userGroupID',isEqualTo: "").get();
+    querySnapshot.docs.forEach((element) {
+      userDataController.ungroupMemberData
+          .add(UserModel.fromJson(element.data()));
+    });
+  }
 
-  querySnapshot.docs.forEach((element) {
-    UserDataController.ungroupMemberData.add(UserModel.fromJson(element.data()));
-  });
-}
+  getGroupData(groupID) async {
+    DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
+    userDataController.groupData.value =
+        GroupModel.fromJson(documentSnapshot.data());
+  }
 
+  listenToGroupData(groupID) {
+    group.doc(groupID).snapshots().listen((value) {
+      userDataController.groupData.value = GroupModel.fromJson(value.data());
+      print('listening to group model...');
+    });
+  }
 }

@@ -10,17 +10,21 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 
+import 'groupMemberData.dart';
+
 class UserProfileDataRepository{
   var logger = Logger();
 
   UserModel userModel = UserModel();
   GetStorage localStorage = GetStorage();
 
+  RepoGroupMembers repoGroupMembers = RepoGroupMembers();
+
   UserDataController userDataController = Get.find();
 
   final databaseReference = FirebaseFirestore.instance;
   CollectionReference user = FirebaseFirestore.instance.collection('User');
-  CollectionReference group = FirebaseFirestore.instance.collection('Groups');
+
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
   userCheckIn(userID,timestamp) async {
@@ -77,7 +81,7 @@ class UserProfileDataRepository{
         userDataController.userData.value = UserModel.fromJson(querySnapshot2.docChanges[0].doc.data());
 
         if(userDataController.userData.value.userGroupID != null){
-           getGroupData(userDataController.userData.value.userGroupID);
+          repoGroupMembers.getGroupData(userDataController.userData.value.userGroupID);
          }
 
         if(rememberMe){
@@ -86,19 +90,6 @@ class UserProfileDataRepository{
         }
         return 'user Found';
       }
-  }
-
-  getGroupData(groupID) async {
-    DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
-    userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
-  }
-
-
-  listenToGroupData(groupID){
-    group.doc(groupID).snapshots().listen((value) {
-      userDataController.groupData.value = GroupModel.fromJson(value.data());
-      print('listening to group model...');
-    });
   }
 
   listenToUserData(email,userLoginType){

@@ -7,6 +7,6 @@ class UserDataController extends GetxController{
   var userData = UserModel().obs;
   var groupData = GroupModel().obs;
   var sessionData = UserSessionModel().obs;
-  static List<UserModel> groupMemberData =[];
-  static List<UserModel> ungroupMemberData =[];
+   RxList<UserModel> groupMemberData =[].obs;
+   RxList<UserModel> ungroupMemberData =[].obs;
 }
