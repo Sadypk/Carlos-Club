@@ -226,7 +226,7 @@ class _HomeBodyState extends State<HomeBody> {
               ),
               child: Container(
                 color: Colors.grey,
-                width: sizeConfig.width * 300,
+                width: sizeConfig.width * 200,
                 height: 2,
               )
           ),

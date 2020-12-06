@@ -336,9 +336,24 @@ class AuthRepository extends GetxController {
 
   userTypeIdentify(){
     Future.delayed(Duration(milliseconds: 1000)).then((value){
-      sessionTypeIdentifier();
+      userTypeIdentifier();
     });
   }
+
+  userTypeIdentifier() async{
+    if(userDataController.userData.value.userType == 'member'){
+      Get.offAll(MemberHomeScreen());
+    }else{
+      Get.offAll(AdminHomeScreen());
+    }
+    addLoginListenerFunction();
+  }
+
+  addLoginListenerFunction() async {
+    await UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
+    await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
+  }
+
 
   sessionTypeIdentifier() async {
     if(userDataController.sessionData.value.userType == 'member'){
@@ -346,11 +361,12 @@ class AuthRepository extends GetxController {
     }else{
       Get.offAll(AdminHomeScreen());
     }
-    addListenerFunction();
+    addSessionListenerFunction();
   }
 
-  addListenerFunction(){
-    UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
-    RepoGroupMembers().listenToGroupData(userDataController.sessionData.value.userGroupID);
+
+  addSessionListenerFunction() async {
+    await UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
+    await RepoGroupMembers().listenToGroupData(userDataController.sessionData.value.userGroupID);
   }
 }
