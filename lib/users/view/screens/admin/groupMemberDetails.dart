@@ -1,14 +1,15 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
-import 'package:flutter_app/users/models/demos.dart';
+import 'package:flutter_app/users/models/member_model.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
-import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/users/view/screens/members/memberCheckInHistory.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -19,8 +20,9 @@ class GroupMemberDetailsScreen extends StatefulWidget {
 
 class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   final GetSizeConfig sizeConfig = Get.find();
-  DemoUsersModel data = Get.arguments;
+  MemberModel data;
 
+  UserDataController userDataController = Get.find();
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode;
 
@@ -28,6 +30,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   void initState() {
     super.initState();
     focusNode = FocusNode()..addListener(() {setState(() {});});
+    data = Get.arguments;
   }
 
   @override
@@ -40,11 +43,11 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
               padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
               child: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                  data.image
+                  data.userPhoto
                 ),
               ),
             ),
-            Text(data.fName + ' ' + data.lName),
+            Text(data.userName),
           ],
         ),
         elevation: 0,
@@ -63,7 +66,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
                 thickness: 1.5,
                 height: sizeConfig.height * 30,
               ),
-              attendenceList(),
+              attendanceList(),
             ],
           ),
         ),
@@ -195,7 +198,8 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
     )..show();
   }
 
-  Widget attendenceList() {
+  Widget attendanceList() {
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -219,12 +223,12 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
           child: Column(
             children: [
               ListView.builder(
-                itemCount: demoCheckInData.length > 10 ? 10 :  demoCheckInData.length,
+                itemCount: userDataController.userData.value.checkInData.length > 10 ? 10 :  userDataController.userData.value.checkInData.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: sizeConfig.height * 10),
                 itemBuilder: listItem,
               ),
-              demoCheckInData.length > 10 ?
+              userDataController.userData.value.checkInData.length > 10 ?
               InkWell(
                 onTap: () => Get.to(MemberCheckInHistory()),
                 child: Text(
@@ -273,8 +277,10 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
     );
   }
 
+
   Widget listItem(BuildContext context, int index) {
-    DemoCheckInModel data = demoCheckInData[index];
+    //DemoCheckInModel data = demoCheckInData[index];
+    Timestamp timestamp = data.checkInData[index];
     return Padding(
       padding:  EdgeInsets.only(
         bottom: sizeConfig.height * 15,
@@ -286,7 +292,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            data.date,
+            DateFormat('dd MMM yyyy').format(timestamp.toDate()),
             style: TextStyle(
                 fontSize: sizeConfig.getSize(18)
             ),
@@ -302,7 +308,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
               )
           ),
           Text(
-              data.time,
+              DateFormat().add_jms().format(timestamp.toDate()),
               style: TextStyle(
                   fontSize: sizeConfig.getSize(18),
                   color: Colors.green

@@ -1,10 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
-import 'package:flutter_app/users/models/demos.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -81,7 +81,7 @@ class _HomeBodyState extends State<HomeBody> {
                 thickness: 1.5,
                 height: sizeConfig.height * 30,
               ),
-              attendenceList(),
+              attendanceList(),
             ],
           ),
         ),
@@ -117,7 +117,7 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
-  Widget attendenceList() {
+  Widget attendanceList() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,12 +141,12 @@ class _HomeBodyState extends State<HomeBody> {
           child: Column(
             children: [
               ListView.builder(
-                itemCount: demoCheckInData.length > 10 ? 10 :  demoCheckInData.length,
+                itemCount: userDataController.userData.value.checkInData.length > 10 ? 10 :  userDataController.userData.value.checkInData.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: sizeConfig.height * 10),
                 itemBuilder: data,
               ),
-              demoCheckInData.length > 10 ?
+              userDataController.userData.value.checkInData.length > 10 ?
               InkWell(
                 onTap: () => Get.to(MemberCheckInHistory()),
                 child: Text(
@@ -195,8 +195,11 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
+
+
   Widget data(BuildContext context, int index) {
-    DemoCheckInModel data = demoCheckInData[index];
+    //DemoCheckInModel data = demoCheckInData[index];
+    Timestamp timestamp = userDataController.userData.value.checkInData[index];
     return Padding(
       padding:  EdgeInsets.only(
         bottom: sizeConfig.height * 15,
@@ -208,7 +211,7 @@ class _HomeBodyState extends State<HomeBody> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            data.date,
+            DateFormat('dd MMM yyyy').format(timestamp.toDate()),
             style: TextStyle(
                 fontSize: sizeConfig.getSize(18)
             ),
@@ -224,7 +227,7 @@ class _HomeBodyState extends State<HomeBody> {
               )
           ),
           Text(
-              data.time,
+              DateFormat().add_jms().format(timestamp.toDate()),
               style: TextStyle(
                   fontSize: sizeConfig.getSize(18),
                   color: Colors.green

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
-import 'package:flutter_app/users/models/demos.dart';
+import 'package:flutter_app/users/models/member_model.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
@@ -21,10 +22,13 @@ class AdminHomeBody extends StatefulWidget {
 class _AdminHomeBodyState extends State<AdminHomeBody> {
   final GetSizeConfig sizeConfig = Get.find();
 
+  UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
   UserDataController userDataController = Get.find();
-
+  MemberModel memberModel = MemberModel();
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
+
+
 
   @override
   void initState() {
@@ -173,23 +177,24 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                             child: ListView.builder(
                               shrinkWrap: true,
                               padding: EdgeInsets.zero,
-                              itemCount: demoGroupMembers.length,
+                              itemCount: userDataController.groupData.value.members.length,
                               itemBuilder: (_, index){
-                                DemoUsersModel user = demoGroupMembers[index];
+                                memberModel = userProfileDataRepository.getMembersInformation(userDataController.groupData.value.members[index]);
+
                                 return Card(
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       backgroundImage: CachedNetworkImageProvider(
-                                          user.image
+                                          memberModel.userPhoto
                                       ),
                                     ),
                                     title: Text(
-                                      user.fName + ' ' + user.lName
+                                        memberModel.userName
                                     ),
                                     trailing: IconButton(
                                         onPressed: (){
                                           Get.back();
-                                          dialog('Success', '${user.fName + ' ' + user.lName} has been added to your group');
+                                          dialog('Success', '${memberModel.userName} has been added to your group');
                                         },
                                         icon: Icon(Icons.add)
                                     ),

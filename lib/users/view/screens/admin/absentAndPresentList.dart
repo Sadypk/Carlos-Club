@@ -1,12 +1,58 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
-import 'package:flutter_app/users/models/demos.dart';
+import 'package:flutter_app/users/models/member_model.dart';
+import 'package:flutter_app/users/repository/groupMemberData.dart';
+import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
+import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'groupMemberDetails.dart';
 
-class AbsentAndPresentListScreen extends StatelessWidget {
+class AbsentAndPresentListScreen extends StatefulWidget {
+
+
+  @override
+  _AbsentAndPresentListScreenState createState() => _AbsentAndPresentListScreenState();
+}
+
+class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen> {
   final GetSizeConfig sizeConfig = Get.find();
+
+  UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
+
+  UserDataController userDataController = Get.find();
+
+  MemberModel memberModel = MemberModel();
+
+  List<MemberModel> presentUser = [];
+
+  List<MemberModel> absentUser = [];
+
+  bool loading = true;
+  getData() async{
+    await RepoGroupMembers.getGroupMemberData();
+
+    UserDataController.groupMemberData.forEach((user) {
+      user.checkInData.forEach((checkIn) {
+        if(DateFormat('dd-MM-yy').format(DateTime.now()) == DateFormat('dd-MM-yy').format(checkIn.toDate())){
+          presentUser.add(user);
+        }
+      });
+    });
+    absentUser.addAll(UserDataController.groupMemberData.where((element) => !presentUser.contains(element)).toList());
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TabBarView(
@@ -20,23 +66,23 @@ class AbsentAndPresentListScreen extends StatelessWidget {
   presentTab(){
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: demoGroupMembers.length,
+      itemCount: presentUser.length,
       padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30, vertical: sizeConfig.height * 15),
-      itemBuilder: item,
+      itemBuilder: item1,
     );
   }
 
   absentTab(){
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: 7,
+      itemCount: absentUser.length,
       padding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 30, vertical: sizeConfig.height * 15),
-      itemBuilder: item,
+      itemBuilder: item2,
     );
   }
-  
-  Widget item(BuildContext context, int index) {
-    DemoUsersModel data = demoGroupMembers[index];
+
+  Widget item1(BuildContext context, int index) {
+    MemberModel data = presentUser[index];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
@@ -46,7 +92,7 @@ class AbsentAndPresentListScreen extends StatelessWidget {
         leading: CircleAvatar(
           radius: sizeConfig.getSize(30),
           backgroundImage: CachedNetworkImageProvider(
-            data.image
+            data.userPhoto
           ),
         ),
         title: Column(
@@ -54,26 +100,47 @@ class AbsentAndPresentListScreen extends StatelessWidget {
           children: [
             RichText(
               text: TextSpan(
-                  text: data.fName,
+                  text: data.userName,
                   style: TextStyle(
                       color: Colors.black,
                     fontSize: sizeConfig.getSize(18),
                     fontWeight: FontWeight.normal
                   ),
-                  children: [
-                    TextSpan(
-                        text: ' ',
-                    ),
-                    TextSpan(
-                        text: data.lName,
-                    )
-                  ]
               ),
             ),
-            data.admin ? Text(
-              'Admin',
-              style: TextStyle(color: Colors.red),
-            ) : SizedBox()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget item2(BuildContext context, int index) {
+    MemberModel data = absentUser[index];
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(8),
+        onTap: (){
+          Get.to(GroupMemberDetailsScreen(), arguments: data);},
+        leading: CircleAvatar(
+          radius: sizeConfig.getSize(30),
+          backgroundImage: CachedNetworkImageProvider(
+            data.userPhoto
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                  text: data.userName,
+                  style: TextStyle(
+                      color: Colors.black,
+                    fontSize: sizeConfig.getSize(18),
+                    fontWeight: FontWeight.normal
+                  ),
+              ),
+            ),
           ],
         ),
       ),

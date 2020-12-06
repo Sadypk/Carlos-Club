@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/users/models/group_model.dart';
+import 'package:flutter_app/users/models/member_model.dart';
 import 'package:flutter_app/users/models/userSessionModel.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -41,7 +42,6 @@ class UserProfileDataRepository{
     }
   }
 
-
   updateUserData(UserModel data) async {
     try{
       await databaseReference.collection("User").doc(data.userID).update(data.toJson());
@@ -68,8 +68,7 @@ class UserProfileDataRepository{
         QuerySnapshot querySnapshot2 = await user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).get();
         userDataController.userData.value = UserModel.fromJson(querySnapshot2.docChanges[0].doc.data());
 
-
-         if(userDataController.userData.value.userGroupID != null){
+        if(userDataController.userData.value.userGroupID != null){
            getGroupData(userDataController.userData.value.userGroupID);
          }
 
@@ -80,7 +79,6 @@ class UserProfileDataRepository{
         return 'user Found';
       }
   }
-
 
   getGroupData(groupID) async {
     DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
@@ -103,7 +101,6 @@ class UserProfileDataRepository{
       print('listening to user model...');
     });
   }
-
 
   updateSessionModel(){
     var sessionData =  UserSessionModel(
@@ -129,5 +126,12 @@ class UserProfileDataRepository{
     }else{
       return 'facebook account available';
     }
+  }
+
+  getMembersInformation(memberID) async {
+    Query query = user.where('userID',isEqualTo: memberID);
+    QuerySnapshot querySnapshot = await query.get();
+    userDataController.memberData.value = MemberModel.fromJson(querySnapshot.docChanges[0].doc.data());
+    return userDataController.memberData.value;
   }
 }
