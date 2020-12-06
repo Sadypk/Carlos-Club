@@ -226,11 +226,28 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             );
           },
         ),
-        btnOkOnPress: (){
+        btnOkOnPress: () async {
+          if(emailController.text.isNotEmpty){
+            setState((){
+              loading = true;
+            });
+            var res = await repoGroupMembers.getUserByEmail(emailController.text,userDataController.userData.value.userGroupID);
+            setState((){
+              loading = false;
+            });
+            if(res == null){
+              getData();
+              dialog('Success', '${emailController.text} has been added to your group');
+            }else{
+              dialog('Failed', res);
+            }
+          }else{
+            Get.snackbar('Attention!', 'Field is empty');
+          }
 
         },
 
-        btnCancelOnPress: (){
+        btnCancelOnPress: ()  {
         }
     )..show();
   }

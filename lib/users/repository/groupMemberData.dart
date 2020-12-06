@@ -52,24 +52,19 @@ class RepoGroupMembers {
     }
   }
 
-  getUserByEmail(userEmail) async {
+  getUserByEmail(userEmail,groupID) async {
     try{
-      QuerySnapshot querySnapshot = await user.where('userEmail', isEqualTo: userEmail).get();
-    }catch(e){
-      logger.i(e);
-      return e.toString();
-    }
-
-  }
-  addToGroupByEmail(memberID,groupID){
-    try{
-      group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
-      user.doc(memberID).update({'userGroupID' : groupID});
+      QuerySnapshot querySnapshot = await user.where('email', isEqualTo: userEmail).get();
+      if(!querySnapshot.isNull){
+        var memberID = querySnapshot.docs[0].data();
+        await addToGroup(memberID['userID'],groupID);
+      }
       return null;
     }catch(e){
       logger.i(e);
       return e.toString();
     }
+
   }
 
   listenToGroupData(groupID) {
