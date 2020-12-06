@@ -100,7 +100,7 @@ class _HomeBodyState extends State<HomeBody> {
           if(result == 'success'){
             Timestamp timestamp = Timestamp.now();
             userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
-            checkInSuccessFull();
+            checkInSuccessful();
           }else{
             checkInFailed();
           }
@@ -243,10 +243,10 @@ class _HomeBodyState extends State<HomeBody> {
   }
 
   void showCalenderZView() {
-    Get.dialog(Dialog(child: CalenderView(),));
+    Get.dialog(Dialog(child: CalenderView(checkInData: userDataController.userData.value.checkInData,)));
   }
 
-  void checkInSuccessFull() {
+  void checkInSuccessful() {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.SUCCES,
