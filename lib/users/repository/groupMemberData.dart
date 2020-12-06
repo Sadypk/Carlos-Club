@@ -16,9 +16,10 @@ class RepoGroupMembers {
 
   getGroupMemberData() async {
     userDataController.groupMemberData.clear();
-    QuerySnapshot querySnapshot = await user
-        .where('userGroupID',
-            isEqualTo: userDataController.userData.value.userGroupID).get();
+    QuerySnapshot querySnapshot = await user.where(
+        'userGroupID',
+        isEqualTo: userDataController.userData.value.userGroupID
+    ).get();
     querySnapshot.docs.forEach((element) {
       userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
     });
@@ -40,10 +41,10 @@ class RepoGroupMembers {
   }
 
 
-  addToGroup(memberID,groupID){
+  addToGroup(memberID,groupID) async{
     try{
-      group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
-      user.doc(memberID).update({'userGroupID' : groupID});
+      await group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
+      await user.doc(memberID).update({'userGroupID' : groupID});
       return null;
     }catch(e){
       logger.i(e);
