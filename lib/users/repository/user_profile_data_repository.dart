@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/users/models/group_model.dart';
-import 'package:flutter_app/users/models/member_model.dart';
 import 'package:flutter_app/users/models/userSessionModel.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -24,12 +23,9 @@ class UserProfileDataRepository{
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
-  userCheckIn(timestamp) async {
+  userCheckIn(userID,timestamp) async {
     try{
-      user.doc(userDataController.userData.value.userID).update({
-          'checkInData' : timestamp,
-        }
-      );
+      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp])});
     }catch(e){
       logger.i(e);
       return e;
@@ -97,6 +93,7 @@ class UserProfileDataRepository{
     userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
   }
 
+
   listenToGroupData(groupID){
     group.doc(groupID).snapshots().listen((value) {
       userDataController.groupData.value = GroupModel.fromJson(value.data());
@@ -138,12 +135,5 @@ class UserProfileDataRepository{
     }else{
       return 'facebook account available';
     }
-  }
-
-  getMembersInformation(memberID) async {
-    Query query = user.where('userID',isEqualTo: memberID);
-    QuerySnapshot querySnapshot = await query.get();
-    userDataController.memberData.value = MemberModel.fromJson(querySnapshot.docChanges[0].doc.data());
-    return userDataController.memberData.value;
   }
 }

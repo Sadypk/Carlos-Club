@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
-import 'package:flutter_app/users/models/member_model.dart';
+import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/repository/groupMemberData.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -21,13 +21,9 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
 
   UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
 
-  UserDataController userDataController = Get.find();
+  List<UserModel> presentUser = [];
 
-  MemberModel memberModel = MemberModel();
-
-  List<MemberModel> presentUser = [];
-
-  List<MemberModel> absentUser = [];
+  List<UserModel> absentUser = [];
 
   bool loading = true;
   getData() async{
@@ -82,7 +78,7 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
   }
 
   Widget item1(BuildContext context, int index) {
-    MemberModel data = presentUser[index];
+    UserModel data = presentUser[index];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
@@ -115,7 +111,7 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
   }
 
   Widget item2(BuildContext context, int index) {
-    MemberModel data = absentUser[index];
+    UserModel data = absentUser[index];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(

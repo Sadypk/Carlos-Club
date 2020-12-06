@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
-import 'package:flutter_app/users/models/member_model.dart';
+import 'package:flutter_app/users/repository/groupMemberData.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -24,17 +24,21 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
 
   UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
   UserDataController userDataController = Get.find();
-  MemberModel memberModel = MemberModel();
   TextEditingController emailController = TextEditingController();
   FocusNode focusNode = FocusNode();
 
 
+  getData() async{
+    await RepoGroupMembers.getMembersInformation();
+  }
 
   @override
   void initState() {
     super.initState();
+    getData();
     focusNode.addListener(() {setState(() {});});
   }
+
 
   @override
   void dispose() {
@@ -146,62 +150,57 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                     height: sizeConfig.height * 300,
                     child: TabBarView(
                       children: [
-                        Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Enter User Email :',
-                                      style: TextStyle(
-                                          fontSize: sizeConfig.getSize(24)
-                                      ),
-                                    ),
-                                    SizedBox(height: sizeConfig.height * 20,),
-                                    RoundedTextField(
-                                        labelText: 'User email',
-                                        icon: Icons.email_outlined,
-                                        controller: emailController,
-                                        focusNode: focusNode,
-                                      autoFocus: false,
-                                      readOnly: false,
-                                    )
-                                  ]
-                              ),
-                            )
-                        ),
-                        Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemCount: userDataController.groupData.value.members.length,
-                              itemBuilder: (_, index){
-                                memberModel = userProfileDataRepository.getMembersInformation(userDataController.groupData.value.members[index]);
-
-                                return Card(
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: CachedNetworkImageProvider(
-                                          memberModel.userPhoto
-                                      ),
-                                    ),
-                                    title: Text(
-                                        memberModel.userName
-                                    ),
-                                    trailing: IconButton(
-                                        onPressed: (){
-                                          Get.back();
-                                          dialog('Success', '${memberModel.userName} has been added to your group');
-                                        },
-                                        icon: Icon(Icons.add)
-                                    ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Enter User Email :',
+                                  style: TextStyle(
+                                      fontSize: sizeConfig.getSize(24)
                                   ),
-                                );
-                              },
-                            )
+                                ),
+                                SizedBox(height: sizeConfig.height * 20,),
+                                RoundedTextField(
+                                    labelText: 'User email',
+                                    icon: Icons.email_outlined,
+                                    controller: emailController,
+                                    focusNode: focusNode,
+                                  autoFocus: false,
+                                  readOnly: false,
+                                )
+                              ]
+                          ),
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: UserDataController.ungroupMemberData.length,
+                          itemBuilder: (_, index){
+                          var data = UserDataController.ungroupMemberData[index];
+                              return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      data.userPhoto
+                                  ),
+                                ),
+                                title: Text(
+                                    data.userName
+                                ),
+                                trailing: IconButton(
+                                    onPressed: (){
+                                      Get.back();
+                                      dialog('Success', '${data.userName} has been added to your group');
+                                    },
+                                    icon: Icon(Icons.add)
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

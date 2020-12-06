@@ -332,20 +332,20 @@ class AuthRepository extends GetxController {
     }
   }
 
-  sessionTypeIdentifier(){
+
+  userTypeIdentify(){
+    Future.delayed(Duration(milliseconds: 1000)).then((value){
+      sessionTypeIdentifier();
+    });
+  }
+
+  sessionTypeIdentifier() async {
+    await addListenerFunction();
     if(userDataController.sessionData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
     }
-    addListenerFunction();
-  }
-
-  userTypeIdentify(){
-    addListenerFunction();
-      Future.delayed(Duration(milliseconds: 1000)).then((value){
-      sessionTypeIdentifier();
-    });
   }
 
   addListenerFunction(){

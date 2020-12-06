@@ -99,7 +99,7 @@ class _HomeBodyState extends State<HomeBody> {
           String result = await Get.dialog(QRScanner());
           if(result == 'success'){
             Timestamp timestamp = Timestamp.now();
-            userProfileDataRepository.userCheckIn(timestamp);
+            userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
             checkInSuccessFull();
           }else{
             checkInFailed();
