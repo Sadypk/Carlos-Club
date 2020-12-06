@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 import 'groupMemberDetails.dart';
 
 class AbsentAndPresentListScreen extends StatefulWidget {
-
+  //TODO call method from another class
+  //method() => createState().getData();
 
   @override
   _AbsentAndPresentListScreenState createState() => _AbsentAndPresentListScreenState();

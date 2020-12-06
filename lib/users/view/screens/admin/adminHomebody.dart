@@ -196,13 +196,14 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                                     onPressed: () async{
                                       var res = await repoGroupMembers.addToGroup(data.userID,userDataController.userData.value.userGroupID);
                                       if(res == null){
+                                        //TODO update absent and present list
+                                        //AbsentAndPresentListScreen().method();
+                                        getData();
                                         Get.back();
                                         dialog('Success', '${data.userName} has been added to your group');
-                                        setState(() {});
                                       }else{
                                         dialog('Failed', res);
                                       }
-
                                     },
                                     icon: Icon(Icons.add)
                                 ),
@@ -218,9 +219,12 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             );
           },
         ),
-        btnOkOnPress: (){},
+        btnOkOnPress: (){
 
-        btnCancelOnPress: (){}
+        },
+
+        btnCancelOnPress: (){
+        }
     )..show();
   }
 
@@ -231,7 +235,8 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
         animType: AnimType.TOPSLIDE,
         title: title,
         desc: desc,
-        btnOkOnPress: (){},
+        btnOkOnPress: (){
+        },
     )..show();
   }
 

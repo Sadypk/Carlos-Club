@@ -25,8 +25,8 @@ class RepoGroupMembers {
   }
 
   getUngroupedMembers() async {
-    QuerySnapshot querySnapshot =
-        await user.where('userGroupID', isEqualTo: "").get();
+    userDataController.ungroupMemberData.clear();
+    QuerySnapshot querySnapshot = await user.where('userGroupID', isEqualTo: "").get();
 
     querySnapshot.docs.forEach((element) {
       userDataController.ungroupMemberData.add(UserModel.fromJson(element.data()));
@@ -39,7 +39,28 @@ class RepoGroupMembers {
         GroupModel.fromJson(documentSnapshot.data());
   }
 
+
   addToGroup(memberID,groupID){
+    try{
+      group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
+      user.doc(memberID).update({'userGroupID' : groupID});
+      return null;
+    }catch(e){
+      logger.i(e);
+      return e.toString();
+    }
+  }
+
+  getUserByEmail(userEmail) async {
+    try{
+      QuerySnapshot querySnapshot = await user.where('userEmail', isEqualTo: userEmail).get();
+    }catch(e){
+      logger.i(e);
+      return e.toString();
+    }
+
+  }
+  addToGroupByEmail(memberID,groupID){
     try{
       group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
       user.doc(memberID).update({'userGroupID' : groupID});

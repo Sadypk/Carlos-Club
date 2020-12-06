@@ -26,15 +26,16 @@ class UserProfileDataRepository{
 
   userCheckIn(userID,timestamp) async {
     try{
-      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp])});
+      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp]),'lastCheckIn': timestamp});
+
       user.snapshots().listen((value) {
         print('listening to manual...');
         userDataController.groupMemberData.clear();
         value.docs.forEach((element) {
           userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
         });
-
       });
+
     }catch(e){
       logger.i(e);
       return e;
