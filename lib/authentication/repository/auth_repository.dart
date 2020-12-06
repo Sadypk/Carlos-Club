@@ -341,12 +341,12 @@ class AuthRepository extends GetxController {
   }
 
   sessionTypeIdentifier() async {
-    await addListenerFunction();
     if(userDataController.sessionData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
     }
+    addListenerFunction();
   }
 
   addListenerFunction(){

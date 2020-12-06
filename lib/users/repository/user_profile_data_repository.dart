@@ -28,10 +28,6 @@ class UserProfileDataRepository{
     try{
       user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp])});
       user.snapshots().listen((value) {
-        // userDataController.g.value = UserModel.fromJson(value.docChanges[0].doc.data());
-        //
-        // updateSessionModel();
-        //
         print('listening to manual...');
         userDataController.groupMemberData.clear();
         value.docs.forEach((element) {

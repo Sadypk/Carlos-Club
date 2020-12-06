@@ -3,8 +3,11 @@ import 'package:flutter_app/users/models/group_model.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class RepoGroupMembers {
+  var logger = Logger();
+
   UserDataController userDataController = Get.find();
   final CollectionReference group =
       FirebaseFirestore.instance.collection('Groups');
@@ -13,15 +16,15 @@ class RepoGroupMembers {
 
   getGroupMemberData() async {
     userDataController.groupMemberData.clear();
-    QuerySnapshot documents = await user
+    QuerySnapshot querySnapshot = await user
         .where('userGroupID',
             isEqualTo: userDataController.userData.value.userGroupID).get();
-    documents.docs.forEach((element) {
+    querySnapshot.docs.forEach((element) {
       userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
     });
   }
 
-  getMembersInformation() async {
+  getUngroupedMembers() async {
     QuerySnapshot querySnapshot =
         await user.where('userGroupID', isEqualTo: "").get();
 
@@ -34,6 +37,17 @@ class RepoGroupMembers {
     DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
     userDataController.groupData.value =
         GroupModel.fromJson(documentSnapshot.data());
+  }
+
+  addToGroup(memberID,groupID){
+    try{
+      group.doc(groupID).update({'members' : FieldValue.arrayUnion([memberID])});
+      user.doc(memberID).update({'userGroupID' : groupID});
+      return null;
+    }catch(e){
+      logger.i(e);
+      return e.toString();
+    }
   }
 
   listenToGroupData(groupID) {

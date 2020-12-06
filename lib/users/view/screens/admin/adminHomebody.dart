@@ -30,7 +30,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
 
 
   getData() async{
-    await repoGroupMembers.getMembersInformation();
+    await repoGroupMembers.getUngroupedMembers();
   }
 
   @override
@@ -193,9 +193,16 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                                     data.userName
                                 ),
                                 trailing: IconButton(
-                                    onPressed: (){
-                                      Get.back();
-                                      dialog('Success', '${data.userName} has been added to your group');
+                                    onPressed: () async{
+                                      var res = await repoGroupMembers.addToGroup(data.userID,userDataController.userData.value.userGroupID);
+                                      if(res == null){
+                                        Get.back();
+                                        dialog('Success', '${data.userName} has been added to your group');
+                                        setState(() {});
+                                      }else{
+                                        dialog('Failed', res);
+                                      }
+
                                     },
                                     icon: Icon(Icons.add)
                                 ),
@@ -212,6 +219,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
           },
         ),
         btnOkOnPress: (){},
+
         btnCancelOnPress: (){}
     )..show();
   }
@@ -224,7 +232,6 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
         title: title,
         desc: desc,
         btnOkOnPress: (){},
-        btnCancelOnPress: (){}
     )..show();
   }
 
