@@ -334,7 +334,7 @@ class AuthRepository extends GetxController {
 
 
   sessionTypeIdentifier(){
-    if(userDataController.userData.value.userType == 'member'){
+    if(userDataController.sessionData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
@@ -350,7 +350,7 @@ class AuthRepository extends GetxController {
   }
 
   addListenerFunction(){
-    UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
-    //UserProfileDataRepository().listenToGroupData(userDataController.userData.value.userGroupID);
+    UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
+    UserProfileDataRepository().listenToGroupData(userDataController.sessionData.value.userGroupID);
   }
 }
