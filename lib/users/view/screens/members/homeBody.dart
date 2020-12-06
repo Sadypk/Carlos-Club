@@ -69,25 +69,27 @@ class _HomeBodyState extends State<HomeBody> {
           )
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: sizeConfig.width * 80
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: sizeConfig.height * 15,),
-              qrScanners(),
-              Divider(
-                color: Colors.grey,
-                thickness: 1.5,
-                height: sizeConfig.height * 30,
-              ),
-              attendanceList(),
-            ],
+      body: Obx((){
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: sizeConfig.width * 80
           ),
-        ),
-      ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: sizeConfig.height * 15,),
+                qrScanners(),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.5,
+                  height: sizeConfig.height * 30,
+                ),
+                attendanceList(),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 
