@@ -69,6 +69,7 @@ class CalenderView extends StatelessWidget {
 
           }
         },
+      endDay: DateTime.now(),
         calendarStyle: CalendarStyle(
           markersColor: Colors.green,
         ),

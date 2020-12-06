@@ -29,8 +29,12 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
 
   bool loading = true;
   getData() async{
+    setState(() {
+      loading = true;
+    });
     await repoGroupMembers.getGroupMemberData();
-
+    absentUser.clear();
+    presentUser.clear();
     userDataController.groupMemberData.forEach((user) {
       user.checkInData.forEach((checkIn) {
         if(DateFormat('dd-MM-yy').format(DateTime.now()) == DateFormat('dd-MM-yy').format(checkIn.toDate())){
@@ -53,12 +57,15 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-      children: [
-        presentTab(),
-        absentTab(),
-      ],
-    );
+
+    return Obx((){
+      return TabBarView(
+        children: [
+          presentTab(),
+          absentTab(),
+        ],
+      );
+    });
   }
 
   presentTab(){
@@ -85,8 +92,15 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
         contentPadding: EdgeInsets.all(8),
-        onTap: (){
-          Get.to(GroupMemberDetailsScreen(), arguments: data);},
+        onTap: () async{
+          bool reload = await Get.to(GroupMemberDetailsScreen(), arguments: data);
+          if(reload !=null){
+            if(reload){
+              getData();
+            }
+          }
+        },
+
         leading: CircleAvatar(
           radius: sizeConfig.getSize(30),
           backgroundImage: CachedNetworkImageProvider(
@@ -118,8 +132,13 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.circular(sizeConfig.width * 20)),
       child: ListTile(
         contentPadding: EdgeInsets.all(8),
-        onTap: (){
-          Get.to(GroupMemberDetailsScreen(), arguments: data);},
+        onTap: () async{
+          bool reload = await Get.to(GroupMemberDetailsScreen(), arguments: data);
+          if(reload !=null){
+            if(reload){
+              getData();
+            }
+          }},
         leading: CircleAvatar(
           radius: sizeConfig.getSize(30),
           backgroundImage: CachedNetworkImageProvider(

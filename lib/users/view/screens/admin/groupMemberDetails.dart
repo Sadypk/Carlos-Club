@@ -53,25 +53,27 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
         ),
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: sizeConfig.width * 80
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: sizeConfig.height * 15,),
-              manualCheckInButton(),
-              Divider(
-                color: Colors.grey,
-                thickness: 1.5,
-                height: sizeConfig.height * 30,
-              ),
-              attendanceList(),
-            ],
+      body: Obx((){
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: sizeConfig.width * 80
           ),
-        ),
-      ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: sizeConfig.height * 15,),
+                manualCheckInButton(),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.5,
+                  height: sizeConfig.height * 30,
+                ),
+                attendanceList(),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -226,7 +228,7 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
           child: Column(
             children: [
               data.checkInData.isEmpty?Container(child: Text('No Check-In History'),):ListView.builder(
-                itemCount: userDataController.userData.value.checkInData.length > 10 ? 10 :  userDataController.userData.value.checkInData.length,
+                itemCount: data.checkInData.length > 10 ? 10 :  data.checkInData.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: sizeConfig.height * 10),
                 itemBuilder: listItem,
@@ -331,7 +333,9 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
       animType: AnimType.TOPSLIDE,
       title: 'Success',
       desc: 'Check In at ${DateFormat('dd MMM').add_jms().format(DateTime.now())}',
-      btnOkOnPress: () {},
+      btnOkOnPress: () {
+        Get.back(result: true);
+      },
     )..show();
   }
 
@@ -342,7 +346,9 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
       animType: AnimType.BOTTOMSLIDE,
       title: 'Error',
       desc: 'Check In failed',
-      btnCancelOnPress: () {},
+      btnCancelOnPress: () {
+
+      },
     )..show();
   }
 

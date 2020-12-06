@@ -12,13 +12,12 @@ class RepoGroupMembers {
       FirebaseFirestore.instance.collection('User');
 
   getGroupMemberData() async {
+    userDataController.groupMemberData.clear();
     QuerySnapshot documents = await user
         .where('userGroupID',
-            isEqualTo: userDataController.userData.value.userGroupID)
-        .get();
+            isEqualTo: userDataController.userData.value.userGroupID).get();
     documents.docs.forEach((element) {
-      userDataController.groupMemberData
-          .add(UserModel.fromJson(element.data()));
+      userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
     });
   }
 
@@ -27,8 +26,7 @@ class RepoGroupMembers {
         await user.where('userGroupID', isEqualTo: "").get();
 
     querySnapshot.docs.forEach((element) {
-      userDataController.ungroupMemberData
-          .add(UserModel.fromJson(element.data()));
+      userDataController.ungroupMemberData.add(UserModel.fromJson(element.data()));
     });
   }
 

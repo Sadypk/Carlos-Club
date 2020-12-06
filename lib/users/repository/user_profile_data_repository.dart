@@ -19,17 +19,26 @@ class UserProfileDataRepository{
   GetStorage localStorage = GetStorage();
 
   RepoGroupMembers repoGroupMembers = RepoGroupMembers();
-
   UserDataController userDataController = Get.find();
 
-  final databaseReference = FirebaseFirestore.instance;
   CollectionReference user = FirebaseFirestore.instance.collection('User');
-
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
   userCheckIn(userID,timestamp) async {
     try{
       user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp])});
+      user.snapshots().listen((value) {
+        // userDataController.g.value = UserModel.fromJson(value.docChanges[0].doc.data());
+        //
+        // updateSessionModel();
+        //
+        print('listening to manual...');
+        userDataController.groupMemberData.clear();
+        value.docs.forEach((element) {
+          userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
+        });
+
+      });
     }catch(e){
       logger.i(e);
       return e;
@@ -54,15 +63,26 @@ class UserProfileDataRepository{
     }
   }
 
+  checkExistingFacebookEmail(email,userLoginType) async {
+    Query query = user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType);
+    QuerySnapshot querySnapshot = await query.get();
+    if(querySnapshot.docs.isEmpty){
+      return null;
+    }else{
+      return 'facebook account available';
+    }
+  }
+
   updateUserData(UserModel data) async {
     try{
       await user.doc(data.userID).update(data.toJson());
 
       bool session = localStorage.hasData('userValues');
-      print(session);
+
       if(session){
         updateSession();
       }
+
     }catch(e){
       logger.i(e);
       return e;
@@ -95,9 +115,6 @@ class UserProfileDataRepository{
   listenToUserData(email,userLoginType){
     user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).snapshots().listen((value) {
       userDataController.userData.value = UserModel.fromJson(value.docChanges[0].doc.data());
-
-      updateSessionModel();
-
       print('listening to user model...');
     });
   }
@@ -118,13 +135,4 @@ class UserProfileDataRepository{
     print(localStorage.read('userValues'));
   }
 
-  checkExistingFacebookEmail(email,userLoginType) async {
-    Query query = user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType);
-    QuerySnapshot querySnapshot = await query.get();
-    if(querySnapshot.docs.isEmpty){
-      return null;
-    }else{
-      return 'facebook account available';
-    }
-  }
 }
