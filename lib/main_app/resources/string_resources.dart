@@ -41,6 +41,7 @@ class StringResources{
   static String groupScreenBtnSeeAll = 'See all';
 
   //Profile Screen Mock Data
+  static const String facebookBaseUrl = "fb.com/";
   static const String firstName = "Samantha";
   static const String lastName = "Claire";
   static const String checkIn = "Check-In's";

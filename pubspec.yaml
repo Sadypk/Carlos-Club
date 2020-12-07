@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.16.1
   path: ^1.7.0
   flutter_spinkit: ^4.1.2+1
+  url_launcher: ^5.7.10
 
   #Firebase
   firebase_core: ^0.5.2

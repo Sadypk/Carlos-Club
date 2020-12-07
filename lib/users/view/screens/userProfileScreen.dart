@@ -6,6 +6,7 @@ import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/main_app/util/url_launcher_helper.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool edit = false;
   final picker = ImagePicker();
   File image;
+
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController facebookController = TextEditingController();
+  TextEditingController instaController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    addressController.text = userDataController.userData.value.address??'';
+    phoneController.text = userDataController.userData.value.phoneNumber??'';
+    facebookController.text = userDataController.userData.value.facebookID??'';
+    instaController.text = userDataController.userData.value.instagramID??'';
+    super.initState();
+  }
+
+
 
 
   void selectPic() async {
@@ -60,6 +78,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userData = userDataController.userData.value;
+    _handleEditSave() async {
+      setState(() {
+        edit = !edit;
+      });
+      if(!edit){
+        var data = UserModel(
+          userID: userData.userID,
+          userGroupID: userData.userGroupID,
+          userName: userData.userName,
+          email: userData.email,
+          userPhoto: userData.userPhoto,
+          address: addressController.text,
+          phoneNumber: phoneController.text,
+          userType: userData.userType,
+          userLoginType: userData.userLoginType,
+          checkInData: userData.checkInData,
+          lastCheckIn: userData.lastCheckIn,
+          facebookID: facebookController.text,
+          instagramID: instaController.text,
+        );
+        var hasException = await authController.updateData(data,image);
+        if(hasException ==null){
+          setState(() {
+            getSnackbar('Success','Profile Updated');
+          });
+        }else{
+          getSnackbar('Error',hasException);
+        }
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -68,36 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: FlatButton(
-              onPressed: () async {
-                setState(() {
-                  edit = !edit;
-                });
-                if(!edit){
-                  var data = UserModel(
-                    userID: userDataController.userData.value.userID,
-                    userGroupID: userDataController.userData.value.userGroupID,
-                    userName: userDataController.userData.value.userName,
-                    email: userDataController.userData.value.email,
-                    userPhoto: userDataController.userData.value.userPhoto,
-                    address: userDataController.userData.value.address,//change
-                    phoneNumber: userDataController.userData.value.phoneNumber,//change
-                    userType: userDataController.userData.value.userType,
-                    userLoginType: userDataController.userData.value.userLoginType,
-                    checkInData: userDataController.userData.value.checkInData,
-                    lastCheckIn: userDataController.userData.value.lastCheckIn,
-                    facebookID: userDataController.userData.value.facebookID,
-                    instagramID: userDataController.userData.value.instagramID,
-                  );
-                  var hasException = await authController.updateData(data,image);
-                  if(hasException ==null){
-                    setState(() {
-                      getSnackbar('Success','Profile Updated');
-                    });
-                  }else{
-                    getSnackbar('Error',hasException);
-                  }
-                }
-              },
+              onPressed: _handleEditSave,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
               color: Colors.grey[400],
               child: Row(
@@ -193,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          userDataController.userData.value.userName??'Loading...',
+                          userData.userName??'Loading...',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: sizeConfig.getSize(22),
@@ -249,7 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                userDataController.userData.value.checkInData.isNull? '0':'${userDataController.userData.value.checkInData.length}',
+                                userData.checkInData.isNull? '0':'${userDataController.userData.value.checkInData.length}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: sizeConfig.getSize(22),
@@ -274,11 +295,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: sizeConfig.height * 30,
                   ),
                   TextField(
-                    enabled: false,
+                    enabled: edit,
                     minLines: 1,
                     maxLines: 2,
+                    controller: addressController,
                     decoration: InputDecoration(
-                        hintText: userDataController.userData.value.address??'Add Address',
+                        hintText: 'Add Address',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -297,7 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     minLines: 1,
                     maxLines: 2,
                     decoration: InputDecoration(
-                        hintText: userDataController.userData.value.email??'Loading...',
+                        hintText: userData.email??'Loading...',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -312,11 +334,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   TextField(
-                    enabled: false,
+                    enabled: edit,
                     minLines: 1,
                     maxLines: 2,
+                    controller: phoneController,
                     decoration: InputDecoration(
-                        hintText: userDataController.userData.value.phoneNumber??'Add Phone',
+                        hintText: 'Add Phone',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -333,44 +356,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          enabled: false,
-                          minLines: 1,
-                          maxLines: 2,
-                          decoration: InputDecoration(
-                              hintText: StringResources.facebook,
-                              hintStyle: TextStyle(
-                                color: AppConst.chocolate,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.api,
-                                size: sizeConfig.getSize(30),
-                                color: AppConst.chocolate,
-                              ),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide.none
-                              )
+                        child: InkWell(
+                          onTap: !edit?(){
+                            UrlLauncherHelper().launchFacebookUrl(facebookController.text);
+                          }:(){},
+                          child: TextFormField(
+                            enabled: edit,
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: facebookController,
+                            decoration: InputDecoration(
+                                hintText: StringResources.facebook,
+                                prefix: Text(StringResources.facebookBaseUrl),
+                                hintStyle: TextStyle(
+                                  color: AppConst.chocolate,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.api,
+                                  size: sizeConfig.getSize(30),
+                                  color: AppConst.chocolate,
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none
+                                )
+                            ),
                           ),
                         ),
                       ),
                       Expanded(
-                        child: TextField(
-                          enabled: false,
-                          minLines: 1,
-                          maxLines: 2,
-                          decoration: InputDecoration(
-                              hintText: StringResources.instagram,
-                              hintStyle: TextStyle(
-                                color: AppConst.chocolate,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.api,
-                                size: sizeConfig.getSize(30),
-                                color: AppConst.chocolate,
-                              ),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide.none
-                              )
+                        child: InkWell(
+                          onTap: !edit?(){
+                            UrlLauncherHelper().launchInstagramUrl(instaController.text);
+                          }:(){},
+                          child: TextField(
+                            enabled: edit,
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: instaController,
+                            decoration: InputDecoration(
+                                hintText: StringResources.instagram,
+                                hintStyle: TextStyle(
+                                  color: AppConst.chocolate,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.api,
+                                  size: sizeConfig.getSize(30),
+                                  color: AppConst.chocolate,
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none
+                                )
+                            ),
                           ),
                         ),
                       ),
