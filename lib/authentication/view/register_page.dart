@@ -45,7 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading;
 
 
-  bool rememberUser = true;
+  bool rememberUser = false;
 
   @override
   void initState() {
@@ -107,13 +107,14 @@ class _RegisterPageState extends State<RegisterPage> {
     String loginType = 'regular';
     var hasExceptionOnCreation = await authController.createUser(nameController.text, emailController.text.trim(), passwordController.text.trim(), image, userType, loginType);
     logger.i(hasExceptionOnCreation);
+    setState(() {
+      isLoading = false;
+    });
     if (hasExceptionOnCreation != null) {
-      setState(() {
-        isLoading = false;
-      });
       getSnackbar(hasExceptionOnCreation);
     }
     else {
+      print('bitch am here');
       var hasException =  await authController.login(emailController.text, passwordController.text,rememberUser);
       if(hasException != null){
         setState(() {
@@ -139,33 +140,36 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          IgnorePointer(
-            ignoring: isLoading?true:false,
-            child: Opacity(
-              opacity: isLoading?0.5:1,
-              child: Container(
-                color: isLoading?Colors.grey[50]:Color(0xffF2F2FF),
-                child: Center(
-                  child: SingleChildScrollView(
-                    physics: ClampingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        header(),
-                        form(),
-                        SizedBox(height: sizeConfig.height * 50,),
-                        footer()
-                      ],
+    return GestureDetector(
+      onTap: ()=> FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            IgnorePointer(
+              ignoring: isLoading?true:false,
+              child: Opacity(
+                opacity: isLoading?0.5:1,
+                child: Container(
+                  color: isLoading?Colors.grey[50]:Color(0xffF2F2FF),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      physics: ClampingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          header(),
+                          form(),
+                          SizedBox(height: sizeConfig.height * 50,),
+                          footer()
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          isLoading?Loader():Container(),
-        ],
+            isLoading?Loader():Container(),
+          ],
+        ),
       ),
     );
   }

@@ -32,7 +32,7 @@ class AuthRepository extends GetxController {
 
   updateData(data,image) async {
     try {
-      Reference ref = storage.ref().child("${userDataController.userData.value.userID}");
+      Reference ref = storage.ref().child("user/${userDataController.userData.value.userID}");
       if(image != null){
         UploadTask uploadTask = ref.putFile(image);
         TaskSnapshot res = await uploadTask;
@@ -98,7 +98,7 @@ class AuthRepository extends GetxController {
       var user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       try {
-        Reference ref = storage.ref().child("${user.user.uid}");
+        Reference ref = storage.ref().child("user/${user.user.uid}");
         UploadTask uploadTask = ref.putFile(userPhoto);
         TaskSnapshot res = await uploadTask;
         if (res != null) {
@@ -133,7 +133,7 @@ class AuthRepository extends GetxController {
       //DateTime dateNow = now.toDate(); //TimeStamp to Date
       //DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch) //TimeStamp to Date
       var data = UserModel(
-        userID: _auth.currentUser.uid,
+        userID: userID,
         userGroupID: '',
         userName: name,
         email: email,
@@ -351,7 +351,9 @@ class AuthRepository extends GetxController {
 
   addLoginListenerFunction() async {
     await UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
-    await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
+    if(userDataController.userData.value.userGroupID != ''){
+      await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
+    }
   }
 
 

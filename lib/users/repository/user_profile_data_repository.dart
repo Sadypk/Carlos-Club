@@ -115,7 +115,7 @@ class UserProfileDataRepository{
         QuerySnapshot querySnapshot2 = await user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).get();
         userDataController.userData.value = UserModel.fromJson(querySnapshot2.docChanges[0].doc.data());
 
-        if(userDataController.userData.value.userGroupID != null){
+        if(userDataController.userData.value.userGroupID != ''){
           repoGroupMembers.getGroupData(userDataController.userData.value.userGroupID);
          }
 

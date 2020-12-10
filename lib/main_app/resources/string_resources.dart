@@ -49,8 +49,8 @@ class StringResources{
   static const String address = "2830  White River Way, PORT CHARLOTTE, Florida";
   static const String email = "samantha1992@gmail.com";
   static const String phone = "801-462-7640";
-  static const String facebook = "Claire Samantha";
-  static const String instagram = "cSamantha";
+  static const String facebook = "Facebook";
+  static const String instagram = "Instagram";
 
   //Member Check In History Screen
   static const String memberCheckInScreenAppbarText = 'Check In History';

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
+import 'package:flutter_app/users/repository/homeBodyRepo.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/widgets/qrScanner.dart';
@@ -38,7 +39,7 @@ class _HomeBodyState extends State<HomeBody> {
           padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
           child: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(
-                StringResources.memberHomeScreenProfilePic
+                userDataController.userData.value.userPhoto
             ),
           ),
         ),
@@ -98,13 +99,24 @@ class _HomeBodyState extends State<HomeBody> {
       padding: EdgeInsets.only(bottom: sizeConfig.height * 10),
       child: FlatButton(
         onPressed: () async{
-          String result = await Get.dialog(QRScanner());
-          if(result == 'success'){
-            Timestamp timestamp = Timestamp.now();
-            userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
-            checkInSuccessful();
+          if(userDataController.userData.value.userGroupID == ''){
+            //TODO give awsome dialog here
+            Get.snackbar('Warning', 'You do not belong to any groups');
           }else{
-            checkInFailed();
+            // checking last check in
+            bool isCheckedIn = await RepoHome.checkLastCheckIn();
+            if(isCheckedIn){
+
+            }else{
+              String result = await Get.dialog(QRScanner());
+              if(result == 'success'){
+                Timestamp timestamp = Timestamp.now();
+                userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
+                checkInSuccessful();
+              }else{
+                checkInFailed();
+              }
+            }
           }
         },
         color: AppConst.green,
