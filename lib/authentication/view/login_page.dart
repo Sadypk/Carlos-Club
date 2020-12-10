@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController emailController = TextEditingController(text: 's@gmail.com');
   TextEditingController passwordController = TextEditingController(text: '123456');
+  var isObscure = true.obs;
 
 
   FocusNode emailNode;
@@ -128,6 +129,7 @@ class _LoginPageState extends State<LoginPage> {
             icon: Icons.email,
             controller: emailController,
             validator: Validator().validateEmail,
+            keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: sizeConfig.height * 30,),
           RoundedTextField(
@@ -137,8 +139,20 @@ class _LoginPageState extends State<LoginPage> {
             labelText: StringResources.loginTextFieldHintPassword,
             icon: Icons.lock,
             controller: passwordController,
-            obscureText: true,
+            obscureText: isObscure.value,
             validator: Validator().validateEmptyPassword,
+            suffixIcon: IconButton(
+              icon: !isObscure.value
+                  ? Icon(
+                Icons.visibility,
+              )
+                  : Icon(
+                Icons.visibility_off,
+              ),
+              onPressed: () {
+                isObscure.value = !isObscure.value;
+              },
+            ),
           ),
           SizedBox(height: sizeConfig.height * 20,),
           rememberMe(),
