@@ -7,7 +7,7 @@ class RepoHome{
     UserDataController userData = Get.find();
     DocumentSnapshot data = await FirebaseFirestore.instance.collection('User').doc(userData.userData.value.userID).get();
     Timestamp lastCheckIn = data.data()['lastCheckIn'];
-    if(DateTime.now().day == lastCheckIn.toDate().day){
+    if(DateTime.now().day == lastCheckIn.toDate().day &&  DateTime.now().month == lastCheckIn.toDate().month && DateTime.now().year == lastCheckIn.toDate().year){
       return true;
     }else{
       return false;
