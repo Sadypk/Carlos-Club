@@ -3,7 +3,7 @@ import 'package:flutter_app/main_app/resources/string_resources.dart';
 
 class Validator {
   String nullFieldValidate(String value) =>
-      value!=null && value !='' ? StringResources.thisFieldIsRequired : null;
+      value==null && value =='' ? StringResources.thisFieldIsRequired : null;
 
 
 
@@ -24,12 +24,14 @@ class Validator {
 
   String validatePassword(String value) {
     final RegExp _passwordRegExp = RegExp(
-      r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$',
+      r'(?=.*?[0-9])(?=.*?[A-Za-z]).+',
     );
     if (value.isEmpty) {
       return StringResources.thisFieldIsRequired;
-    } else if (!_passwordRegExp.hasMatch(value)) {
+    } else if (value.length<6) {
       return StringResources.passwordMustBeSix;
+    }else if (!_passwordRegExp.hasMatch(value)) {
+      return StringResources.passwordRequirementText;
     } else {
       return null;
     }

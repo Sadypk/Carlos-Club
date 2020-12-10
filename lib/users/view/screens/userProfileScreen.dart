@@ -11,6 +11,7 @@ import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 
@@ -353,65 +354,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         )
                     ),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: !edit?(){
-                            UrlLauncherHelper().launchFacebookUrl(facebookController.text);
-                          }:(){},
-                          child: TextFormField(
-                            enabled: edit,
-                            minLines: 1,
-                            maxLines: 2,
-                            controller: facebookController,
-                            decoration: InputDecoration(
-                                hintText: StringResources.facebook,
-                                prefix: Text(StringResources.facebookBaseUrl),
-                                hintStyle: TextStyle(
-                                  color: AppConst.chocolate,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.api,
-                                  size: sizeConfig.getSize(30),
-                                  color: AppConst.chocolate,
-                                ),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none
-                                )
-                            ),
+                  InkWell(
+                    onTap: !edit && facebookController.text.isNotEmpty ?(){
+                      UrlLauncherHelper().launchFacebookUrl(facebookController.text);
+                    }:(){},
+                    child: TextFormField(
+                      enabled: edit,
+                      minLines: 1,
+                      maxLines: 2,
+                      controller: facebookController,
+                      decoration: InputDecoration(
+                          hintText: StringResources.facebook,
+                          prefix: Text(StringResources.facebookBaseUrl),
+                          hintStyle: TextStyle(
+                            color: AppConst.chocolate,
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: !edit?(){
-                            UrlLauncherHelper().launchInstagramUrl(instaController.text);
-                          }:(){},
-                          child: TextField(
-                            enabled: edit,
-                            minLines: 1,
-                            maxLines: 2,
-                            controller: instaController,
-                            decoration: InputDecoration(
-                                hintText: StringResources.instagram,
-                                hintStyle: TextStyle(
-                                  color: AppConst.chocolate,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.api,
-                                  size: sizeConfig.getSize(30),
-                                  color: AppConst.chocolate,
-                                ),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none
-                                )
-                            ),
+                          prefixIcon: FaIcon(
+                            FontAwesomeIcons.facebookSquare,
+                            size: sizeConfig.getSize(30),
+                            color: AppConst.chocolate,
                           ),
-                        ),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                          )
                       ),
-                    ],
+                    ),
                   ),
+                  InkWell(
+                    onTap: !edit && instaController.text.isNotEmpty ?(){
+                      UrlLauncherHelper().launchInstagramUrl(instaController.text);
+                    }:(){},
+                    child: TextField(
+                      enabled: edit,
+                      minLines: 1,
+                      maxLines: 2,
+                      controller: instaController,
+                      decoration: InputDecoration(
+                          hintText: StringResources.instagram,
+                          hintStyle: TextStyle(
+                            color: AppConst.chocolate,
+                          ),
+                          prefixIcon: FaIcon(
+                            FontAwesomeIcons.instagramSquare,
+                            size: sizeConfig.getSize(30),
+                            color: AppConst.chocolate,
+                          ),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                          )
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

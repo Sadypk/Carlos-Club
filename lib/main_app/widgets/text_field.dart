@@ -30,6 +30,7 @@ class RoundedTextField extends StatelessWidget {
   final int maxLength;
   final GestureTapCallback onTap;
   final Key textFieldKey;
+  final Widget suffixIcon;
   RoundedTextField({
     @required this.labelText,
     @required this.icon,
@@ -55,6 +56,7 @@ class RoundedTextField extends StatelessWidget {
     this.readOnly = false,
     this.textFieldKey,
     this.textInputAction,
+    this.suffixIcon
   });
   @override
   Widget build(BuildContext context) {
@@ -84,7 +86,7 @@ class RoundedTextField extends StatelessWidget {
             color: Color(0xff4D4F56)
         ),
         decoration: InputDecoration(
-          labelText: labelText + ' (required)',
+          labelText: isRequired?labelText + ' (required)':labelText,
           labelStyle: TextStyle(
               color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey
           ),
@@ -92,6 +94,7 @@ class RoundedTextField extends StatelessWidget {
             icon,
             color: focusNode.hasFocus ? AppConst.green : AppConst.darkGrey,
           ),
+          suffixIcon: suffixIcon,
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(111),
               borderSide: BorderSide(

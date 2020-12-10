@@ -32,6 +32,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confPasswordController = TextEditingController();
+  var isObscure = true.obs;
+  var isObscureConfirmPass = true.obs;
 
   FocusNode nameNode;
   FocusNode emailNode;
@@ -186,110 +188,137 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget form() {
 
-    return Form(
-      key: formKey,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: sizeConfig.getSize(45),
-                backgroundImage: image == null ? AssetImage(
-                    'assets/images/demo_profile_image.jpg'
-                ) : FileImage(image),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: selectPic,
-                  child: CircleAvatar(
-                    radius: sizeConfig.getSize(20),
-                    backgroundColor: Colors.white60,
-                    child: Icon(Icons.camera_alt_outlined),
+    return Obx((){
+      return Form(
+        key: formKey,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: sizeConfig.getSize(45),
+                  backgroundImage: image == null ? AssetImage(
+                      'assets/images/demo_profile_image.jpg'
+                  ) : FileImage(image),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: selectPic,
+                    child: CircleAvatar(
+                      radius: sizeConfig.getSize(20),
+                      backgroundColor: Colors.white60,
+                      child: Icon(Icons.camera_alt_outlined),
+                    ),
                   ),
                 ),
+              ],
+            ),
+            SizedBox(height: sizeConfig.height * 10,),
+            RoundedTextField(
+              focusNode: nameNode,
+              labelText: StringResources.registrationTextFieldHintName,
+              icon: Icons.person_outline,
+              controller: nameController,
+              validator: Validator().nullFieldValidate,
+            ),
+            SizedBox(height: sizeConfig.height * 10,),
+            RoundedTextField(
+              focusNode: emailNode,
+              labelText: StringResources.registrationTextFieldHintEmail,
+              icon: Icons.email_outlined,
+              controller: emailController,
+              validator: Validator().validateEmail,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: sizeConfig.height * 10,),
+            RoundedTextField(
+              focusNode: passwordNode,
+              labelText: StringResources.registrationTextFieldHintPassword,
+              icon: Icons.lock_outline,
+              controller: passwordController,
+              obscureText: isObscure.value,
+              validator: Validator().validatePassword,
+              suffixIcon: IconButton(
+                icon: !isObscure.value
+                    ? Icon(
+                  Icons.visibility,
+                )
+                    : Icon(
+                  Icons.visibility_off,
+                ),
+                onPressed: () {
+                  isObscure.value = !isObscure.value;
+                },
               ),
-            ],
-          ),
-          SizedBox(height: sizeConfig.height * 10,),
-          RoundedTextField(
-            focusNode: nameNode,
-            labelText: StringResources.registrationTextFieldHintName,
-            icon: Icons.person_outline,
-            controller: nameController,
-            validator: Validator().nameValidator,
-          ),
-          SizedBox(height: sizeConfig.height * 10,),
-          RoundedTextField(
-            focusNode: emailNode,
-            labelText: StringResources.registrationTextFieldHintEmail,
-            icon: Icons.email_outlined,
-            controller: emailController,
-            validator: Validator().validateEmail,
-          ),
-          SizedBox(height: sizeConfig.height * 10,),
-          RoundedTextField(
-            focusNode: passwordNode,
-            labelText: StringResources.registrationTextFieldHintPassword,
-            icon: Icons.lock_outline,
-            controller: passwordController,
-            obscureText: true,
-            validator: Validator().validatePassword,
-          ),
-          SizedBox(height: sizeConfig.height * 10,),
-          RoundedTextField(
-            focusNode: confPassNode,
-            labelText: StringResources.registrationTextFieldHintConfirmPassword,
-            icon: Icons.lock_outline,
-            controller: confPasswordController,
-            obscureText: true,
-            validator: (v){
-              return Validator().validateConfirmPassword(passwordController.text, v);
-            },
-          ),
-          SizedBox(height: sizeConfig.height * 30,),
-          signUpMethods(),
-          SizedBox(height: sizeConfig.height * 30,),
-          BlueButton(
-              text: StringResources.registrationBtnRegister,
-              onTap: () async {
+            ),
+            SizedBox(height: sizeConfig.height * 10,),
+            RoundedTextField(
+              focusNode: confPassNode,
+              labelText: StringResources.registrationTextFieldHintConfirmPassword,
+              icon: Icons.lock_outline,
+              controller: confPasswordController,
+              obscureText: isObscureConfirmPass.value,
+                suffixIcon: IconButton(
+                  icon: !isObscureConfirmPass.value
+                  ? Icon(
+                  Icons.visibility,
+                  )
+                      : Icon(
+                  Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                  isObscureConfirmPass.value = !isObscureConfirmPass.value;
+                  },
+                ),
+              validator: (v){
+                return Validator().validateConfirmPassword(passwordController.text, v);
+              },
+            ),
+            SizedBox(height: sizeConfig.height * 30,),
+            signUpMethods(),
+            SizedBox(height: sizeConfig.height * 30,),
+            BlueButton(
+                text: StringResources.registrationBtnRegister,
+                onTap: () async {
 
-                FocusScope.of(this.context).unfocus();
-                if (formKey.currentState.validate()) {
+                  FocusScope.of(this.context).unfocus();
+                  if (formKey.currentState.validate()) {
 
-                   if (passwordController.text != confPasswordController.text) {
-                     Get.snackbar(
-                       "Text Field Error!",
-                       "Password does not match",
-                       backgroundColor: Colors.black,
-                       colorText: Colors.white,
-                       margin: EdgeInsets.only(left: sizeConfig.width * 10,
-                           right: sizeConfig.width * 10,
-                           bottom: sizeConfig.height * 15),
-                       snackPosition: SnackPosition.BOTTOM,
-                     );
-                   }else{
-                     if(image == null){
-                       print('here');
-                       //Converting Asset to File for profile picture
-                       Directory directory = await getApplicationDocumentsDirectory();
-                       var dbPath = join(directory.path, "temp.jpg");
-                       ByteData data = await rootBundle.load("assets/images/demo_profile_image.jpg");
-                       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-                       image = await File(dbPath).writeAsBytes(bytes);
-                       sendDataToFunction();
-                     }else{
-                       sendDataToFunction();
-                     }
-                   }
+                    if (passwordController.text != confPasswordController.text) {
+                      Get.snackbar(
+                        "Text Field Error!",
+                        "Password does not match",
+                        backgroundColor: Colors.black,
+                        colorText: Colors.white,
+                        margin: EdgeInsets.only(left: sizeConfig.width * 10,
+                            right: sizeConfig.width * 10,
+                            bottom: sizeConfig.height * 15),
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    }else{
+                      if(image == null){
+                        print('here');
+                        //Converting Asset to File for profile picture
+                        Directory directory = await getApplicationDocumentsDirectory();
+                        var dbPath = join(directory.path, "temp.jpg");
+                        ByteData data = await rootBundle.load("assets/images/demo_profile_image.jpg");
+                        List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+                        image = await File(dbPath).writeAsBytes(bytes);
+                        sendDataToFunction();
+                      }else{
+                        sendDataToFunction();
+                      }
+                    }
+                  }
                 }
-              }
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    });
   }
 
   Widget signUpMethods() {

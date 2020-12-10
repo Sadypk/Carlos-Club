@@ -7,6 +7,7 @@ class StringResources{
   static const String pleaseEnterEmailText = 'Please enter your email address';
   static const String pleaseEnterAValidEmailText = 'Please enter a valid email address';
   static const String passwordMustBeSix = 'Password must be at least 6 characters long';
+  static String passwordRequirementText = "Password requires at least one digit and one letter";
   static const String pleaseEnterPasswordText = 'Please enter password';
 
   //Splash Screen
