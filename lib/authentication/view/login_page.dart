@@ -104,15 +104,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: sizeConfig.height * 300,
       // color: Colors.red,
-      child: Center(
-        child: Text(
-          StringResources.loginHeaderText,
-          style: TextStyle(
-              fontSize: sizeConfig.getSize(34),
-              fontWeight: FontWeight.bold
-          ),
-        ),
-      ),
+      child: FlutterLogo(size: sizeConfig.width * 300,),
     );
   }
 

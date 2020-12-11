@@ -178,15 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Container(
       height: sizeConfig.height * 200,
       // color: Colors.red,
-      child: Center(
-        child: Text(
-          StringResources.registrationHeader,
-          style: TextStyle(
-              fontSize: sizeConfig.getSize(34),
-              fontWeight: FontWeight.bold
-          ),
-        ),
-      ),
+      child: FlutterLogo(size: sizeConfig.width * 300,),
     );
   }
 
