@@ -9,7 +9,6 @@ import 'package:flutter_app/main_app/util/validator.dart';
 import 'package:flutter_app/main_app/widgets/blue_button.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,8 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   AuthRepository authController = Get.find();
   GetSizeConfig sizeConfig = Get.find();
 
-  TextEditingController emailController = TextEditingController(text: 's@gmail.com');
-  TextEditingController passwordController = TextEditingController(text: '123456');
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   var isObscure = true.obs;
 
 

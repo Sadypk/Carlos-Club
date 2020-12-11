@@ -1,19 +1,21 @@
-import 'dart:convert';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/main_app/widgets/loader.dart';
 import 'package:flutter_app/main_app/widgets/logout_dialog.dart';
 import 'package:flutter_app/users/repository/groupMemberData.dart';
+import 'package:flutter_app/users/repository/homeBodyRepo.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
 import 'package:flutter_app/users/view/screens/admin/absentAndPresentList.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/widgets/text_field.dart';
+import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AdminHomeBody extends StatefulWidget {
   @override
@@ -65,41 +67,6 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
           ),
           title: Text('Welcome: ${userDataController.userData.value.userName}'),
           elevation: 0,
-          bottom: AppBar(
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            title: TabBar(
-              labelColor: AppConst.magenta,
-              unselectedLabelColor: Colors.grey[500],
-              labelStyle: TextStyle(
-                  fontSize: sizeConfig.getSize(18),
-                  fontWeight: FontWeight.bold
-              ),
-              unselectedLabelStyle: TextStyle(
-                  fontSize: sizeConfig.getSize(18)
-              ),
-              tabs: [
-                Tab(text: 'Present',),
-                Tab(text: 'Absent',),
-              ],
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FlatButton(
-                  onPressed: addMember,
-                  color: Colors.green,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add,color: Colors.white,),
-                      Text('Add User',style: TextStyle(color: Colors.white),),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -125,7 +92,70 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             )
           ],
         ),
-        body: loading ? Loader() : AbsentAndPresentListScreen(),
+        body: loading ? Loader() : Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            qrScanners(),
+            TabBar(
+              labelColor: AppConst.magenta,
+              unselectedLabelColor: Colors.grey[500],
+              labelStyle: TextStyle(
+                  fontSize: sizeConfig.getSize(18),
+                  fontWeight: FontWeight.bold
+              ),
+              unselectedLabelStyle: TextStyle(
+                  fontSize: sizeConfig.getSize(18)
+              ),
+              tabs: [
+                Tab(text: 'Present',),
+                Tab(text: 'Absent',),
+              ],
+            ),
+            AbsentAndPresentListScreen(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget qrScanners() {
+    return Padding(
+      padding: EdgeInsets.all( sizeConfig.height * 20),
+      child: FlatButton(
+        onPressed: () async{
+          if(userDataController.userData.value.userGroupID == ''){
+            //TODO give awsome dialog here
+            Get.snackbar('Warning', 'You do not belong to any groups');
+          }else{
+            // checking last check in
+            bool isCheckedIn = await RepoHome.checkLastCheckIn();
+            if(isCheckedIn){
+              Get.snackbar('Failed', 'You have already checked in today');
+            }else{
+              String result = await Get.dialog(QRScanner());
+              if(result == 'success'){
+                Timestamp timestamp = Timestamp.now();
+                await userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
+                checkInSuccessful();
+
+              }else{
+                checkInFailed();
+              }
+            }
+          }
+        },
+        color: AppConst.green,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(sizeConfig.width * 20)),
+        minWidth: double.infinity,
+        height: sizeConfig.height * 80,
+        child: Text(
+          StringResources.memberHomeScreenBtnScanQr,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: sizeConfig.getSize(28),
+              color: Colors.white
+          ),
+        ),
       ),
     );
   }
@@ -261,6 +291,30 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
         desc: desc,
         btnOkOnPress: (){
         },
+    )..show();
+  }
+
+
+
+  void checkInSuccessful() {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.SUCCES,
+      animType: AnimType.TOPSLIDE,
+      title: 'Success',
+      desc: 'Check In at ${DateFormat('dd MMM').add_jms().format(DateTime.now())}',
+      btnOkOnPress: () {},
+    )..show();
+  }
+
+  void checkInFailed() {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.ERROR,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Error',
+      desc: 'Check In failed',
+      btnCancelOnPress: () {},
     )..show();
   }
 }

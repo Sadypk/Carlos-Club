@@ -106,7 +106,7 @@ class _HomeBodyState extends State<HomeBody> {
             // checking last check in
             bool isCheckedIn = await RepoHome.checkLastCheckIn();
             if(isCheckedIn){
-
+              Get.snackbar('Failed', 'You have already checked in today');
             }else{
               String result = await Get.dialog(QRScanner());
               if(result == 'success'){

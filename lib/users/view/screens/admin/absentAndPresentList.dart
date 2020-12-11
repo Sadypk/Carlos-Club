@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
@@ -22,7 +24,6 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
   UserDataController userDataController = Get.find();
 
   UserProfileDataRepository userProfileDataRepository = UserProfileDataRepository();
-  RepoGroupMembers repoGroupMembers = RepoGroupMembers();
 
   List<UserModel> presentUser = [];
 
@@ -33,40 +34,55 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
     setState(() {
       loading = true;
     });
-    await repoGroupMembers.getGroupMemberData();
-    absentUser.clear();
-    presentUser.clear();
-    userDataController.groupMemberData.forEach((user) {
-      user.checkInData.forEach((checkIn) {
-        if(DateFormat('dd-MM-yy').format(DateTime.now()) == DateFormat('dd-MM-yy').format(checkIn.toDate())){
-          presentUser.add(user);
-        }
-      });
-    });
-    absentUser.addAll(userDataController.groupMemberData.where((element) => !presentUser.contains(element)).toList());
+    await RepoGroupMembers().getGroupMemberData();
 
     setState(() {
+
+      absentUser.clear();
+      presentUser.clear();
+      userDataController.groupMemberData.forEach((user) {
+        user.checkInData.forEach((checkIn) {
+          if(DateFormat('dd-MM-yy').format(DateTime.now()) == DateFormat('dd-MM-yy').format(checkIn.toDate())){
+            presentUser.add(user);
+          }
+        });
+      });
+      absentUser.addAll(userDataController.groupMemberData.where((element) => !presentUser.contains(element)).toList());
+
+
       loading = false;
     });
   }
+
+  Timer timer;
 
   @override
   void initState() {
     getData();
     super.initState();
+    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   getData();
+    //   print('new data');
+    // });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return Obx((){
-      return TabBarView(
+    getData();
+    return Expanded(
+      child: TabBarView(
         children: [
           presentTab(),
           absentTab(),
         ],
-      );
-    });
+      ),
+    );
   }
 
   presentTab(){
