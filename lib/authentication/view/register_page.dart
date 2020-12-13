@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 class RegisterPage extends StatefulWidget {
 
@@ -296,9 +296,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     }else{
                       if(image == null){
-                        print('here');
                         //Converting Asset to File for profile picture
-                        Directory directory = await getApplicationDocumentsDirectory();
+                        Directory directory = await path_provider.getApplicationDocumentsDirectory();
                         var dbPath = join(directory.path, "temp.jpg");
                         ByteData data = await rootBundle.load("assets/images/demo_profile_image.jpg");
                         List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);

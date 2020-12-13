@@ -8,7 +8,7 @@ import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-void main() async{
+main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await Firebase.initializeApp();
