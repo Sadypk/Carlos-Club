@@ -353,6 +353,8 @@ class AuthRepository extends GetxController {
     await UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
     if(userDataController.userData.value.userGroupID != ''){
       await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
+      await RepoGroupMembers().listenToCheckInData();
+
     }
   }
 
@@ -369,6 +371,13 @@ class AuthRepository extends GetxController {
 
   addSessionListenerFunction() async {
     await UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
-    await RepoGroupMembers().listenToGroupData(userDataController.sessionData.value.userGroupID);
+    if(userDataController.userData.value.userGroupID != ''){
+      await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
+      if(userDataController.userData.value.userType == 'admin'){
+        print('here on listen data');
+        // Future.delayed(Duration(milliseconds: 1000)())
+        await RepoGroupMembers().listenToCheckInData();
+      }
+    }
   }
 }

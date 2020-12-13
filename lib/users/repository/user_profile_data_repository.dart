@@ -128,6 +128,7 @@ class UserProfileDataRepository{
   }
 
   listenToUserData(email,userLoginType){
+    print('listenToUserData');
     user.where('email',isEqualTo: email).where('userLoginType',isEqualTo: userLoginType).snapshots().listen((value) {
       userDataController.userData.value = UserModel.fromJson(value.docChanges[0].doc.data());
       print('listening to user model...');

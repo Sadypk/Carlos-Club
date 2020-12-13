@@ -96,19 +96,32 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
           mainAxisSize: MainAxisSize.min,
           children: [
             qrScanners(),
-            TabBar(
-              labelColor: AppConst.magenta,
-              unselectedLabelColor: Colors.grey[500],
-              labelStyle: TextStyle(
-                  fontSize: sizeConfig.getSize(18),
-                  fontWeight: FontWeight.bold
-              ),
-              unselectedLabelStyle: TextStyle(
-                  fontSize: sizeConfig.getSize(18)
-              ),
-              tabs: [
-                Tab(text: 'Present',),
-                Tab(text: 'Absent',),
+            Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    labelColor: AppConst.magenta,
+                    unselectedLabelColor: Colors.grey[500],
+                    labelStyle: TextStyle(
+                        fontSize: sizeConfig.getSize(18),
+                        fontWeight: FontWeight.bold
+                    ),
+                    unselectedLabelStyle: TextStyle(
+                        fontSize: sizeConfig.getSize(18)
+                    ),
+                    tabs: [
+                      Tab(text: 'Present',),
+                      Tab(text: 'Absent',),
+                    ],
+                  ),
+                ),
+                FlatButton.icon(
+                  color: AppConst.magenta,
+                  onPressed: addMember,
+                  icon: Icon(Icons.add),
+                  label: Text('Add'),
+                ),
+                SizedBox(width: sizeConfig.width * 20,)
               ],
             ),
             AbsentAndPresentListScreen(),
@@ -132,7 +145,9 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             if(isCheckedIn){
               Get.snackbar('Failed', 'You have already checked in today');
             }else{
-              String result = await Get.dialog(QRScanner());
+              String result = 'success';
+              //TODO oa lookey here;
+              // String result = await Get.dialog(QRScanner());
               if(result == 'success'){
                 Timestamp timestamp = Timestamp.now();
                 await userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
