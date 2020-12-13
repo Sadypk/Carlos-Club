@@ -62,7 +62,6 @@ class LogoutDialog extends StatelessWidget {
                   child: InkWell(
                     onTap: (){
                       authController.signOut();
-                      localStorage.remove('userValues');
                     },
                     child: Container(
                       decoration: BoxDecoration(

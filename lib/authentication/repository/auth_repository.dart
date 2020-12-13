@@ -202,8 +202,7 @@ class AuthRepository extends GetxController {
       } else {
         _auth.signOut();
       }
-      await localStorage.erase();
-      //localStorage.remove('userValues');
+      localStorage.remove('userValues');
       Get.offAll(LoginPage());
     } catch (e) {
       Get.snackbar(
