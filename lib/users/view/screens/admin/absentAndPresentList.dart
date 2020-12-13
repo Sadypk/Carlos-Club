@@ -12,8 +12,6 @@ import 'package:intl/intl.dart';
 import 'groupMemberDetails.dart';
 
 class AbsentAndPresentListScreen extends StatefulWidget {
-  //TODO call method from another class
-  //method() => createState().getData();
 
   @override
   _AbsentAndPresentListScreenState createState() => _AbsentAndPresentListScreenState();
@@ -37,7 +35,6 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
     await RepoGroupMembers().getGroupMemberData();
 
     setState(() {
-
       absentUser.clear();
       presentUser.clear();
       userDataController.groupMemberData.forEach((user) {
@@ -54,12 +51,15 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
     });
   }
 
-  Timer timer;
-
   @override
   void initState() {
-    getData();
-    super.initState();
+    if(!mounted){
+      return;
+    }else{
+      getData();
+      super.initState();
+    }
+
     // timer = Timer.periodic(Duration(seconds: 1), (timer) {
     //   getData();
     //   print('new data');
@@ -68,7 +68,6 @@ class _AbsentAndPresentListScreenState extends State<AbsentAndPresentListScreen>
 
   @override
   void dispose() {
-    timer.cancel();
     super.dispose();
   }
 

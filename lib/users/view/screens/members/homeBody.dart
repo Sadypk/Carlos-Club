@@ -100,7 +100,6 @@ class _HomeBodyState extends State<HomeBody> {
       child: FlatButton(
         onPressed: () async{
           if(userDataController.userData.value.userGroupID == ''){
-            //TODO give awsome dialog here
             Get.snackbar('Warning', 'You do not belong to any groups');
           }else{
             // checking last check in

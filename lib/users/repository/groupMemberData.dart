@@ -37,8 +37,7 @@ class RepoGroupMembers {
 
   getGroupData(groupID) async {
     DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
-    userDataController.groupData.value =
-        GroupModel.fromJson(documentSnapshot.data());
+    userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
   }
 
 
@@ -68,19 +67,18 @@ class RepoGroupMembers {
 
   }
 
-  listenToGroupData(groupID) {
-    print('listenToGroupData');
+/*  listenToGroupData(groupID) {
+
     group.doc(groupID).snapshots().listen((value) {
       userDataController.groupData.value = GroupModel.fromJson(value.data());
       print('listening to group model...');
     });
-  }
+  }*/
 
 
   listenToCheckInData(){
-    print('listenToCheckInData');
+    print('here on function');
     for(var data in userDataController.groupMemberData){
-      print('here on function');
       user.where('userGroupID',isEqualTo: data.userGroupID).snapshots().listen((value) {
         userDataController.checkInData.value = CheckInModel.fromJson(value.docChanges[0].doc.data()['lastCheckIn']);
         print('listening to checkIn model...');

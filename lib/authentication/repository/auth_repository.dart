@@ -341,41 +341,28 @@ class AuthRepository extends GetxController {
   }
 
   userTypeIdentifier() async{
+    getData(userDataController.userData.value.email,userDataController.userData.value.userGroupID,userDataController.userData.value.userType,userDataController.userData.value.userLoginType);
     if(userDataController.userData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
     }
-    addLoginListenerFunction();
   }
-
-  addLoginListenerFunction() async {
-    await UserProfileDataRepository().listenToUserData(userDataController.userData.value.email,userDataController.userData.value.userLoginType);
-    if(userDataController.userData.value.userGroupID != ''){
-      await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
-      await RepoGroupMembers().listenToCheckInData();
-
-    }
-  }
-
 
   sessionTypeIdentifier() async {
+    getData(userDataController.sessionData.value.email,userDataController.sessionData.value.userGroupID,userDataController.sessionData.value.userType,userDataController.sessionData.value.userLoginType);
     if(userDataController.sessionData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
       Get.offAll(AdminHomeScreen());
     }
-    addSessionListenerFunction();
   }
 
-
-  addSessionListenerFunction() async {
-    await UserProfileDataRepository().listenToUserData(userDataController.sessionData.value.email,userDataController.sessionData.value.userLoginType);
-    if(userDataController.userData.value.userGroupID != ''){
-      await RepoGroupMembers().listenToGroupData(userDataController.userData.value.userGroupID);
-      if(userDataController.userData.value.userType == 'admin'){
-        print('here on listen data');
-        // Future.delayed(Duration(milliseconds: 1000)())
+  getData(email,groupID,userType,userLoginType) async {
+    await UserProfileDataRepository().listenToUserData(email,userLoginType);
+    if(groupID != ''){
+      await RepoGroupMembers().getGroupData(groupID);
+      if(userType == 'admin'){
         await RepoGroupMembers().listenToCheckInData();
       }
     }

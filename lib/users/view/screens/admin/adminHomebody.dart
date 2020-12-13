@@ -137,7 +137,6 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
       child: FlatButton(
         onPressed: () async{
           if(userDataController.userData.value.userGroupID == ''){
-            //TODO give awsome dialog here
             Get.snackbar('Warning', 'You do not belong to any groups');
           }else{
             // checking last check in
@@ -145,9 +144,8 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             if(isCheckedIn){
               Get.snackbar('Failed', 'You have already checked in today');
             }else{
-              String result = 'success';
-              //TODO oa lookey here;
-              // String result = await Get.dialog(QRScanner());
+              String result = await Get.dialog(QRScanner());
+             // String result = 'success';
               if(result == 'success'){
                 Timestamp timestamp = Timestamp.now();
                 await userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
