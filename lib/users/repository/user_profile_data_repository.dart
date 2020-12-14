@@ -25,11 +25,18 @@ class UserProfileDataRepository{
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
+  checkCode(String result) async {
+    DocumentSnapshot documentSnapshot = await group.doc(userDataController.userData.value.userGroupID).get();
+    if(documentSnapshot.data()['groupCode'] == result){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   userCheckIn(userID,timestamp) async {
     try{
-
       user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp]),'lastCheckIn': timestamp});
-
     }catch(e){
       logger.i(e);
       return e;
@@ -144,14 +151,4 @@ class UserProfileDataRepository{
     localStorage.write('userValues',userDataController.sessionData.value);
     print(localStorage.read('userValues'));
   }
-
-  checkCode(String result) async {
-    DocumentSnapshot documentSnapshot = await group.doc(userDataController.userData.value.userGroupID).get();
-    if(documentSnapshot.data()['groupCode'] == result){
-      return true;
-    }else{
-      return false;
-    }
-  }
-
 }

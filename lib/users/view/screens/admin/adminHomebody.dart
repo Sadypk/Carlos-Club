@@ -145,12 +145,13 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
               Get.snackbar('Failed', 'You have already checked in today');
             }else{
               String result = await Get.dialog(QRScanner());
-             // String result = 'success';
-              if(result == 'success'){
-                Timestamp timestamp = Timestamp.now();
-                await userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
-                checkInSuccessful();
 
+              bool checkCodeException = await userProfileDataRepository.checkCode(result);
+
+              if(checkCodeException){
+                Timestamp timestamp = Timestamp.now();
+                userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
+                checkInSuccessful();
               }else{
                 checkInFailed();
               }
