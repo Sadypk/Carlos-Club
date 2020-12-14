@@ -33,45 +33,51 @@ class _HomeBodyState extends State<HomeBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(
-                userDataController.userData.value.userPhoto
+    return Obx((){
+      return Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+            child: GestureDetector(
+              onTap: (){
+                userDataController.tabIndex.value = 1;
+                print(userDataController.tabIndex.value);
+              },
+              child: CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(
+                    userDataController.userData.value.userPhoto
+                ),
+              ),
             ),
           ),
+          title: Text('Welcome: ${userDataController.userData.value.userName}'),
+          elevation: 0,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton(
+                child: Icon(Icons.exit_to_app),
+                onSelected: (bool value){
+                  if(value){
+                    Get.dialog(LogoutDialog());
+                  }else{
+                  }
+                },
+                itemBuilder: (_){
+                  return [
+                    PopupMenuItem(
+                      value: true,
+                      child: Text(
+                          'Logout'
+                      ),
+                    )
+                  ];
+                },
+              ),
+            )
+          ],
         ),
-        title: Text('Welcome: ${userDataController.userData.value.userName}'),
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton(
-              child: Icon(Icons.exit_to_app),
-              onSelected: (bool value){
-                if(value){
-                  Get.dialog(LogoutDialog());
-                }else{
-                }
-              },
-              itemBuilder: (_){
-                return [
-                  PopupMenuItem(
-                    value: true,
-                    child: Text(
-                        'Logout'
-                    ),
-                  )
-                ];
-              },
-            ),
-          )
-        ],
-      ),
-      body: Obx((){
-        return Padding(
+        body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: sizeConfig.width * 80
           ),
@@ -89,9 +95,9 @@ class _HomeBodyState extends State<HomeBody> {
               ],
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget qrScanners() {
@@ -108,7 +114,10 @@ class _HomeBodyState extends State<HomeBody> {
               Get.snackbar('Failed', 'You have already checked in today');
             }else{
               String result = await Get.dialog(QRScanner());
-              if(result == 'success'){
+
+              bool checkCodeException = await userProfileDataRepository.checkCode(result);
+
+              if(checkCodeException){
                 Timestamp timestamp = Timestamp.now();
                 userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
                 checkInSuccessful();

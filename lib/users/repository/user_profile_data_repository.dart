@@ -22,19 +22,13 @@ class UserProfileDataRepository{
   UserDataController userDataController = Get.find();
 
   CollectionReference user = FirebaseFirestore.instance.collection('User');
+  CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
 
   userCheckIn(userID,timestamp) async {
     try{
-      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp]),'lastCheckIn': timestamp});
 
-/*      user.snapshots().listen((value) {
-        print('listening to manual...');
-        userDataController.groupMemberData.clear();
-        value.docs.forEach((element) {
-          userDataController.groupMemberData.add(UserModel.fromJson(element.data()));
-        });
-      });*/
+      user.doc(userID).update({'checkInData' : FieldValue.arrayUnion([timestamp]),'lastCheckIn': timestamp});
 
     }catch(e){
       logger.i(e);
@@ -149,6 +143,15 @@ class UserProfileDataRepository{
     print('updating cookies...');
     localStorage.write('userValues',userDataController.sessionData.value);
     print(localStorage.read('userValues'));
+  }
+
+  checkCode(String result) async {
+    DocumentSnapshot documentSnapshot = await group.doc(userDataController.userData.value.userGroupID).get();
+    if(documentSnapshot.data()['groupCode'] == result){
+      return true;
+    }else{
+      return false;
+    }
   }
 
 }
