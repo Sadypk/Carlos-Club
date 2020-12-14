@@ -253,12 +253,13 @@ class _LoginPageState extends State<LoginPage> {
           print('Checking Google...');
           AuthRepository authGoogle = Get.find();
           var hasException = await authGoogle.handleGoogleSignIn();
+          setState(() {
+            isLoading = false;
+          });
           if(hasException != null){
-            setState(() {
-              isLoading = false;
-            });
             getSnackbar(hasException);
           }
+
         }
       },
       child: Card(

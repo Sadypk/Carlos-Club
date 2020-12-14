@@ -220,44 +220,43 @@ class AuthRepository extends GetxController {
 
     try{
       GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
-      GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-
-      AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-
-
-      var existingAccount = await UserProfileDataRepository().checkExistingFacebookEmail(googleSignInAccount.email, 'facebook');
-      if (existingAccount == null) {
-        //login result
-        UserCredential result = await _auth.signInWithCredential(credential);
-        if (result != null) {
-          var dbHasException = await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
-          //check if there's same email in firebase
-          if (dbHasException == null) {
-            //if no email found in Firebase
-            var hasException = await addUserToDatabase(
-                result.user.displayName,
-                result.user.email,
-                result.user.photoURL,
-                userType,
-                userLoginType,
-                _auth.currentUser.uid);
-            if (hasException != null) {
-              logger.i('error');
+      if(googleSignInAccount != null){
+        GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+        var existingAccount = await UserProfileDataRepository().checkExistingFacebookEmail(googleSignInAccount.email, 'facebook');
+        if (existingAccount == null) {
+          //login result
+          UserCredential result = await _auth.signInWithCredential(credential);
+          if (result != null) {
+            var dbHasException = await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
+            //check if there's same email in firebase
+            if (dbHasException == null) {
+              //if no email found in Firebase
+              var hasException = await addUserToDatabase(
+                  result.user.displayName,
+                  result.user.email,
+                  result.user.photoURL,
+                  userType,
+                  userLoginType,
+                  _auth.currentUser.uid);
+              if (hasException != null) {
+                logger.i('error');
+              } else {
+                await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
+                //get user data after adding to Firebase
+                userTypeIdentify();
+                logger.i('success');
+              }
             } else {
-              await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
-              //get user data after adding to Firebase
               userTypeIdentify();
-              logger.i('success');
             }
-          } else {
-            userTypeIdentify();
           }
         }
-      }
-      else{
-        return 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.';
+        else{
+          return 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.';
+        }
       }
     }on FirebaseAuthException catch (eErrorData) {
       // Error on adding error data
