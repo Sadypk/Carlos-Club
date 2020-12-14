@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/authentication/repository/auth_repository.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -13,6 +14,8 @@ import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 
 
@@ -46,22 +49,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
   }
 
-
-
+  showDialog(context) {
+    Get.dialog(CupertinoAlertDialog(
+      title: Text('Camera Permission'),
+      content: Text(
+          'App requires photo storage permission to access in gallery'),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          child: Text('Deny'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        CupertinoDialogAction(
+          child: Text('Settings'),
+          onPressed: () async {
+            var dialogCloser = await openAppSettings();
+            if(dialogCloser != null){
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ],
+    ));
+  }
 
   void selectPic() async {
-    try {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      setState(() {
-        if (pickedFile != null) {
-          image = File(pickedFile.path);
-        } else {
-          print('No image selected.');
-        }
-      });
-    } catch (e) {
-      print(e.toString());
+    if(await Permission.photos.request().isGranted){
+      try {
+        final pickedFile = await picker.getImage(source: ImageSource.gallery);
+        setState(() {
+          if (pickedFile != null) {
+            image = File(pickedFile.path);
+          } else {
+            print('No image selected.');
+          }
+        });
+      } catch (e) {
+        showDialog(context);
+        print(e.toString());
+      }
     }
+    else{
+      showDialog(context);
+    }
+
+
   }
 
 

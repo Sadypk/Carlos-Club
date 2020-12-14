@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
@@ -16,6 +17,8 @@ import 'package:flutter_app/users/view/widgets/qrScanner.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 class AdminHomeBody extends StatefulWidget {
   @override
@@ -34,6 +37,29 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
 
   getData() async{
     await repoGroupMembers.getUngroupedMembers();
+  }
+
+  showDialog(context) {
+    Get.dialog(CupertinoAlertDialog(
+      title: Text('Camera Permission'),
+      content: Text(
+          'App requires camera permission to scan QR code'),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          child: Text('Deny'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        CupertinoDialogAction(
+          child: Text('Settings'),
+          onPressed: () async {
+            var dialogCloser = await openAppSettings();
+            if(dialogCloser != null){
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ],
+    ));
   }
 
   @override
@@ -144,16 +170,20 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
             if(isCheckedIn){
               Get.snackbar('Failed', 'You have already checked in today');
             }else{
-              String result = await Get.dialog(QRScanner());
+              if(await Permission.camera.request().isGranted){
+                String result = await Get.dialog(QRScanner());
+                bool checkCodeException = await userProfileDataRepository.checkCode(result);
 
-              bool checkCodeException = await userProfileDataRepository.checkCode(result);
-
-              if(checkCodeException){
-                Timestamp timestamp = Timestamp.now();
-                userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
-                checkInSuccessful();
-              }else{
-                checkInFailed();
+                if(checkCodeException){
+                  Timestamp timestamp = Timestamp.now();
+                  userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
+                  checkInSuccessful();
+                }else{
+                  checkInFailed();
+                }
+              }
+              else{
+                showDialog(context);
               }
             }
           }

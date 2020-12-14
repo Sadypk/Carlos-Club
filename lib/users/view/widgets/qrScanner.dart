@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -10,10 +11,12 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-
+  
   var qrText = "Please wait...";
 
   QRViewController controller;
+
+
 
   @override
   void dispose() {
