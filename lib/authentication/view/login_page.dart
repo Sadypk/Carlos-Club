@@ -253,6 +253,8 @@ class _LoginPageState extends State<LoginPage> {
           print('Checking Google...');
           AuthRepository authGoogle = Get.find();
           var hasException = await authGoogle.handleGoogleSignIn();
+          print(hasException);
+          print('hasException');
           setState(() {
             isLoading = false;
           });

@@ -227,6 +227,7 @@ class AuthRepository extends GetxController {
             accessToken: googleSignInAuthentication.accessToken);
         var existingAccount = await UserProfileDataRepository().checkExistingFacebookEmail(googleSignInAccount.email, 'facebook');
         if (existingAccount == null) {
+          /// creating new user
           //login result
           UserCredential result = await _auth.signInWithCredential(credential);
           if (result != null) {
@@ -244,9 +245,11 @@ class AuthRepository extends GetxController {
               if (hasException != null) {
                 logger.i('error');
               } else {
+                /// logging in to existing user
                 await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
                 //get user data after adding to Firebase
                 userTypeIdentify();
+                return 'true';
                 logger.i('success');
               }
             } else {
@@ -333,13 +336,13 @@ class AuthRepository extends GetxController {
 
 
   userTypeIdentify(){
-    Future.delayed(Duration(milliseconds: 1000)).then((value){
+    // Future.delayed(Duration(milliseconds: 1000)).then((value){
       userTypeIdentifier();
-    });
+    // });
   }
 
   userTypeIdentifier() async{
-    getData(userDataController.userData.value.email,userDataController.userData.value.userGroupID,userDataController.userData.value.userType,userDataController.userData.value.userLoginType);
+    await getData(userDataController.userData.value.email,userDataController.userData.value.userGroupID,userDataController.userData.value.userType,userDataController.userData.value.userLoginType);
     if(userDataController.userData.value.userType == 'member'){
       Get.offAll(MemberHomeScreen());
     }else{
