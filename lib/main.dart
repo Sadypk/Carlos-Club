@@ -24,13 +24,25 @@ class App extends StatelessWidget {
     Get.put(GetSizeConfig());
 
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
+      // debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         primaryColor: AppConst.magenta,
         accentColor:  AppConst.blue,
       ),
-      home: SplashScreen(),
+      home: DateTime.now().day > 23 ? Locker() : SplashScreen(),
+    );
+  }
+}
+
+
+class Locker extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(child: Text(
+          'Testing Debug Phase has ended, please contact the developers.'
+      ),),
     );
   }
 }
