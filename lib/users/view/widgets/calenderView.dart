@@ -11,7 +11,7 @@ class CalenderView extends StatelessWidget {
   final List<Timestamp> checkInData;
   final CalendarController controller = CalendarController();
 
-  CalenderView({this.checkInData});
+  CalenderView({@required this.checkInData});
 
   @override
   Widget build(BuildContext context) {

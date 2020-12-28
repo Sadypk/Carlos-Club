@@ -248,9 +248,9 @@ class AuthRepository extends GetxController {
                 /// logging in to existing user
                 await UserProfileDataRepository().getUserData(result.user.email, userLoginType,rememberUser);
                 //get user data after adding to Firebase
+                logger.i('success');
                 userTypeIdentify();
                 return 'true';
-                logger.i('success');
               }
             } else {
               userTypeIdentify();

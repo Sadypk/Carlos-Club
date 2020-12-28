@@ -6,6 +6,8 @@ import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
+import 'package:flutter_app/users/view/screens/admin/memberProfileScreen.dart';
+import 'package:flutter_app/users/view/screens/userProfileScreen.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
 import 'package:flutter_app/users/view/screens/members/memberCheckInHistory.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
@@ -38,18 +40,23 @@ class _GroupMemberDetailsScreenState extends State<GroupMemberDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-              child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                  data.userPhoto
+        title: GestureDetector(
+          onTap: (){
+            Get.to(MemberProfileScreen(),arguments: data);
+          },
+          child: Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: sizeConfig.getSize(4),bottom: sizeConfig.getSize(4), right: sizeConfig.getSize(10)),
+                child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                    data.userPhoto
+                  ),
                 ),
               ),
-            ),
-            Text(data.userName),
-          ],
+              Text(data.userName),
+            ],
+          ),
         ),
         elevation: 0,
       ),

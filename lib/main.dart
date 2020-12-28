@@ -30,7 +30,7 @@ class App extends StatelessWidget {
         primaryColor: AppConst.magenta,
         accentColor:  AppConst.blue,
       ),
-      home: DateTime.now().day > 23 ? Locker() : SplashScreen(),
+      home: DateTime.now().day >= 31 ? Locker() : SplashScreen(),
     );
   }
 }
