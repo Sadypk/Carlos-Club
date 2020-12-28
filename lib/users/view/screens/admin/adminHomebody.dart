@@ -85,10 +85,15 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          leading: Padding(
-            padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-            child: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+          leading: GestureDetector(
+            onTap: (){
+              userDataController.tabIndex.value = 1;
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+              child: CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+              ),
             ),
           ),
           title: Text('Welcome: ${userDataController.userData.value.userName}'),
