@@ -96,7 +96,27 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
               ),
             ),
           ),
-          title: Text('Welcome: ${userDataController.userData.value.userName}'),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Welcome: ${userDataController.userData.value.userName}'),
+              userDataController.userData.value.userType == 'admin' ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'ADMIN',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
+                  ),
+                ),
+              ) : SizedBox()
+            ],
+          ),
           elevation: 0,
           actions: [
             Padding(
@@ -184,6 +204,7 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
                   userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
                   checkInSuccessful();
                 }else{
+                  await userProfileDataRepository.logCheckInFailed(result);
                   checkInFailed();
                 }
               }

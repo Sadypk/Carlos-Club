@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
-import 'package:flutter_app/users/models/group_model.dart';
 import 'package:flutter_app/users/models/userSessionModel.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view_model/user_profile_view_model.dart';
@@ -24,6 +21,7 @@ class UserProfileDataRepository{
   CollectionReference user = FirebaseFirestore.instance.collection('User');
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
   CollectionReference loginErrors = FirebaseFirestore.instance.collection('LoginErrors');
+  CollectionReference checkInErrors = FirebaseFirestore.instance.collection('checkInErrors');
 
   checkCode(String result) async {
     DocumentSnapshot documentSnapshot = await group.doc(userDataController.userData.value.userGroupID).get();
@@ -55,6 +53,20 @@ class UserProfileDataRepository{
   loginFailed(ErrorModel data) async {
     try{
       await loginErrors.add(data.toJson()).then((value) => logger.i(value)).catchError((e){logger.e(e);});
+    }catch(e){
+      logger.i(e);
+      return e;
+    }
+  }
+
+  logCheckInFailed(String qrCode) async {
+    try{
+      await checkInErrors.add({
+        'userId': '${userDataController.userData.value.userID}',
+        'userName': '${userDataController.userData.value.userName}',
+        'message': qrCode == null ? 'No QR code scanned' : 'Wrong QR code > $qrCode',
+        'timeStamp': Timestamp.now()
+      });
     }catch(e){
       logger.i(e);
       return e;

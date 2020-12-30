@@ -147,9 +147,10 @@ class _HomeBodyState extends State<HomeBody> {
 
                 if(checkCodeException){
                   Timestamp timestamp = Timestamp.now();
-                  userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
+                  await userProfileDataRepository.userCheckIn(userDataController.userData.value.userID,timestamp);
                   checkInSuccessful();
                 }else{
+                  await userProfileDataRepository.logCheckInFailed(result);
                   checkInFailed();
                 }
               }
