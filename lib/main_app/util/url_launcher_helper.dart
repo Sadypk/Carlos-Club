@@ -30,4 +30,20 @@ class UrlLauncherHelper{
     throw 'There was a problem to open the url: $instaUrl';
     }
   }
+
+  Future<void> sendEmail(String url) async {
+    if (await canLaunch('mailto:$url')) {
+      await launch('mailto:$url');
+    } else {
+      throw 'Could not email $url';
+    }
+  }
+
+  Future<void> makePhoneCall(String url) async {
+    if (await canLaunch('tel:$url')) {
+      await launch('tel:$url');
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

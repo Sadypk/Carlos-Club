@@ -1,8 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/main_app/resources/size_config.dart';
 import 'package:flutter_app/main_app/resources/string_resources.dart';
+import 'package:flutter_app/main_app/util/url_launcher_helper.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/view/screens/members/memberCheckInHistory.dart';
 import 'package:flutter_app/users/view/widgets/calenderView.dart';
@@ -11,13 +13,15 @@ import 'package:get/get.dart';
 
 class MemberProfileScreen extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.find();
+  final UserModel member = Get.arguments;
+
   @override
   Widget build(BuildContext context) {
-    final UserModel member = Get.arguments;
-    final TextEditingController addressController = TextEditingController(text: member.address);
-    final  TextEditingController phoneController = TextEditingController(text: member.phoneNumber);
-    final TextEditingController facebookController = TextEditingController(text: member.facebookID);
-    final TextEditingController instaController = TextEditingController(text: member.instagramID);
+    final TextEditingController addressController = TextEditingController(text: member.address ?? null);
+    final TextEditingController emailControoler = TextEditingController(text: member.email ?? null);
+    final  TextEditingController phoneController = TextEditingController(text: member.phoneNumber ?? null);
+    final TextEditingController facebookController = TextEditingController(text: member.facebookID ?? null);
+    final TextEditingController instaController = TextEditingController(text: member.instagramID ?? null);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -130,7 +134,7 @@ class MemberProfileScreen extends StatelessWidget {
                     maxLines: 2,
                     controller: addressController,
                     decoration: InputDecoration(
-                        hintText: 'Add Address',
+                        hintText: 'No Address Given',
                         hintStyle: TextStyle(
                           color: AppConst.chocolate,
                         ),
@@ -144,43 +148,76 @@ class MemberProfileScreen extends StatelessWidget {
                         )
                     ),
                   ),
-                  TextField(
-                    enabled: false,
-                    minLines: 1,
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                        hintText: member.email??'Loading...',
-                        hintStyle: TextStyle(
-                          color: AppConst.chocolate,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          size: sizeConfig.getSize(30),
-                          color: AppConst.chocolate,
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none
-                        )
+                  GestureDetector(
+                    onTap: (){
+                      if(emailControoler.text.length > 0){
+                        AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.NO_HEADER,
+                            title: 'Email ${member.userName}',
+                            desc: 'Open email to Send an email to ${member.email} ?',
+                            btnCancelOnPress: (){},
+                            btnOkOnPress: () async{
+                              await UrlLauncherHelper().sendEmail(member.email);
+                            }
+                        )..show();
+                      }
+                    },
+                    child: TextField(
+                      enabled: false,
+                      minLines: 1,
+                      maxLines: 2,
+                      controller: emailControoler,
+                      decoration: InputDecoration(
+                          hintText: 'No email given',
+                          hintStyle: TextStyle(
+                            color: AppConst.chocolate,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            size: sizeConfig.getSize(30),
+                            color: AppConst.chocolate,
+                          ),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                          )
+                      ),
                     ),
                   ),
-                  TextField(
-                    enabled: false,
-                    minLines: 1,
-                    maxLines: 2,
-                    controller: phoneController,
-                    decoration: InputDecoration(
-                        hintText: 'Add Phone',
-                        hintStyle: TextStyle(
-                          color: AppConst.chocolate,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.phone_iphone_outlined,
-                          size: sizeConfig.getSize(30),
-                          color: AppConst.chocolate,
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none
-                        )
+                  GestureDetector(
+                    onTap: (){
+                      if(phoneController.text.length > 0){
+                        AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.NO_HEADER,
+                            title: 'Call ${member.userName}',
+                            desc: 'Make a call to ${member.phoneNumber} ?',
+                            btnCancelOnPress: (){},
+                            btnOkOnPress: () async{
+                              await UrlLauncherHelper().makePhoneCall(member.phoneNumber);
+                            }
+                        )..show();
+                      }
+                    },
+                    child: TextField(
+                      enabled: false,
+                      minLines: 1,
+                      maxLines: 2,
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                          hintText: 'No phone number given',
+                          hintStyle: TextStyle(
+                            color: AppConst.chocolate,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.phone_iphone_outlined,
+                            size: sizeConfig.getSize(30),
+                            color: AppConst.chocolate,
+                          ),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                          )
+                      ),
                     ),
                   ),
                   Padding(
