@@ -62,65 +62,67 @@ class _HomeBodyState extends State<HomeBody> {
   @override
   Widget build(BuildContext context) {
     return Obx((){
-      return Scaffold(
-        appBar: AppBar(
-          leading: Padding(
-            padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-            child: GestureDetector(
-              onTap: (){
-                userDataController.tabIndex.value = 1;
-                print(userDataController.tabIndex.value);
-              },
-              child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                    userDataController.userData.value.userPhoto
+      return SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            leading: Padding(
+              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+              child: GestureDetector(
+                onTap: (){
+                  userDataController.tabIndex.value = 1;
+                  print(userDataController.tabIndex.value);
+                },
+                child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                      userDataController.userData.value.userPhoto
+                  ),
                 ),
               ),
             ),
-          ),
-          title: Text('Welcome: ${userDataController.userData.value.userName}'),
-          elevation: 0,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PopupMenuButton(
-                child: Icon(Icons.exit_to_app),
-                onSelected: (bool value){
-                  if(value){
-                    Get.dialog(LogoutDialog());
-                  }else{
-                  }
-                },
-                itemBuilder: (_){
-                  return [
-                    PopupMenuItem(
-                      value: true,
-                      child: Text(
-                          'Logout'
-                      ),
-                    )
-                  ];
-                },
-              ),
-            )
-          ],
-        ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: sizeConfig.width * 80
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: sizeConfig.height * 15,),
-                qrScanners(),
-                Divider(
-                  color: Colors.grey,
-                  thickness: 1.5,
-                  height: sizeConfig.height * 30,
+            title: Text('Welcome: ${userDataController.userData.value.userName}'),
+            elevation: 0,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PopupMenuButton(
+                  child: Icon(Icons.exit_to_app),
+                  onSelected: (bool value){
+                    if(value){
+                      Get.dialog(LogoutDialog());
+                    }else{
+                    }
+                  },
+                  itemBuilder: (_){
+                    return [
+                      PopupMenuItem(
+                        value: true,
+                        child: Text(
+                            'Logout'
+                        ),
+                      )
+                    ];
+                  },
                 ),
-                attendanceList(),
-              ],
+              )
+            ],
+          ),
+          body: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: sizeConfig.width * 80
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: sizeConfig.height * 15,),
+                  qrScanners(),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.5,
+                    height: sizeConfig.height * 30,
+                  ),
+                  attendanceList(),
+                ],
+              ),
             ),
           ),
         ),

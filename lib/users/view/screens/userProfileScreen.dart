@@ -147,317 +147,319 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
 
-    return IsScreenLoading(
-      isLoading: isLoading,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FlatButton(
-                onPressed: _handleEditSave,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
-                color: Colors.grey[400],
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      edit ? Icons.save : Icons.edit,
-                      color: Colors.white,
-                      size: sizeConfig.getSize(20),
-                    ),
-                    SizedBox(width: sizeConfig.width * 10,),
-                    Text(
-                      edit ? 'Save' : 'Edit',
-                      style: TextStyle(
+    return SafeArea(
+      child: IsScreenLoading(
+        isLoading: isLoading,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  onPressed: _handleEditSave,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
+                  color: Colors.grey[400],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        edit ? Icons.save : Icons.edit,
                         color: Colors.white,
-                        fontSize: sizeConfig.getSize(18)
+                        size: sizeConfig.getSize(20),
                       ),
-                    )
-                  ],
+                      SizedBox(width: sizeConfig.width * 10,),
+                      Text(
+                        edit ? 'Save' : 'Edit',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: sizeConfig.getSize(18)
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
-        ),
-        extendBodyBehindAppBar: true,
-        body: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                height: sizeConfig.height* 500,
-                child: Stack(
-                  children: [
-                    ClipPath(
-                      clipper: MyClip(),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
-                               // image: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??MemberHomeScreenViewModel.profilePic) : FileImage(image),
-                                fit: BoxFit.cover
-                            )
+              )
+            ],
+          ),
+          extendBodyBehindAppBar: true,
+          body: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: Column(
+              children: [
+                Container(
+                  height: sizeConfig.height* 500,
+                  child: Stack(
+                    children: [
+                      ClipPath(
+                        clipper: MyClip(),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+                                 // image: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??MemberHomeScreenViewModel.profilePic) : FileImage(image),
+                                  fit: BoxFit.cover
+                              )
+                          ),
                         ),
                       ),
-                    ),
-                    ClipPath(
-                      clipper: MyClip(),
-                      child: Container(
-                        color: AppConst.magenta.withOpacity(.2),
+                      ClipPath(
+                        clipper: MyClip(),
+                        child: Container(
+                          color: AppConst.magenta.withOpacity(.2),
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: sizeConfig.width.value * 60,
-                      child: CircleAvatar(
-                        radius: sizeConfig.getSize(65),
-                        backgroundColor: Colors.white,
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: sizeConfig.getSize(60),
-                              backgroundImage: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic) : FileImage(image)),
-                            if (edit) Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: selectPic,
-                                child: CircleAvatar(
-                                  radius: sizeConfig.getSize(20),
-                                  backgroundColor: Colors.white60,
-                                  child: Icon(
-                                    Icons.camera
+                      Positioned(
+                        bottom: 0,
+                        left: sizeConfig.width.value * 60,
+                        child: CircleAvatar(
+                          radius: sizeConfig.getSize(65),
+                          backgroundColor: Colors.white,
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: sizeConfig.getSize(60),
+                                backgroundImage: image == null ? CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic) : FileImage(image)),
+                              if (edit) Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: selectPic,
+                                  child: CircleAvatar(
+                                    radius: sizeConfig.getSize(20),
+                                    backgroundColor: Colors.white60,
+                                    child: Icon(
+                                      Icons.camera
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ) else SizedBox(),
-                          ],
+                              ) else SizedBox(),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: sizeConfig.width * 35
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            userData.userName??'Loading...',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: sizeConfig.getSize(22),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: sizeConfig.height * 100,
-                          color: AppConst.magenta,
-                          width: 4,
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: (){
-                              /*Get.dialog(Dialog(
-                                child: Padding(
-                                  padding: EdgeInsets.all(sizeConfig.getSize(20)),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      FlatButton(
-                                        onPressed: (){
-                                          Get.back();
-                                          Get.to(MemberCheckInHistory());
-                                        },
-                                        color: Colors.grey[300],
-                                        child: Text(
-                                            'View all'
-                                        ),
-                                        height: sizeConfig.height * 70,
-                                        minWidth: sizeConfig.width * 300,
-                                      ),
-                                      SizedBox(width: sizeConfig.width * 20,),
-                                      FlatButton(
-                                        onPressed: (){
-                                          Get.back();
-                                          Get.dialog(Dialog(child: CalenderView(),));
-                                        },
-                                        color: Colors.grey[300],
-                                        child: Text(
-                                            'View calender'
-                                        ),
-                                        height: sizeConfig.height * 70,
-                                        minWidth: sizeConfig.width * 300,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ));*/
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  userData.checkInData.isNull? '0':'${userDataController.userData.value.checkInData.length}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: sizeConfig.getSize(22),
-                                      color: AppConst.magenta
-                                  ),
-                                ),
-                                Text(
-                                    StringResources.checkIn,
-                                    style: TextStyle(
-                                        fontSize: sizeConfig.getSize(18)
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Divider(
-                      color: AppConst.magenta,
-                      thickness: 4,
-                      height: sizeConfig.height * 30,
-                    ),
-                    TextField(
-                      enabled: edit,
-                      minLines: 1,
-                      maxLines: 2,
-                      controller: addressController,
-                      decoration: InputDecoration(
-                          hintText: 'Add Address',
-                          hintStyle: TextStyle(
-                            color: AppConst.chocolate,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.location_pin,
-                            size: sizeConfig.getSize(30),
-                            color: AppConst.chocolate,
-                          ),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none
-                          )
-                      ),
-                    ),
-                    TextField(
-                      enabled: false,
-                      minLines: 1,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                          hintText: userData.email??'Loading...',
-                          hintStyle: TextStyle(
-                            color: AppConst.chocolate,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.email_outlined,
-                            size: sizeConfig.getSize(30),
-                            color: AppConst.chocolate,
-                          ),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none
-                          )
-                      ),
-                    ),
-                    TextField(
-                      enabled: edit,
-                      minLines: 1,
-                      maxLines: 2,
-                      controller: phoneController,
-                      decoration: InputDecoration(
-                          hintText: 'Add Phone',
-                          hintStyle: TextStyle(
-                            color: AppConst.chocolate,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.phone_iphone_outlined,
-                            size: sizeConfig.getSize(30),
-                            color: AppConst.chocolate,
-                          ),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none
-                          )
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: sizeConfig.width * 30),
-                      child: Column(
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: sizeConfig.width * 35
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          InkWell(
-                            onTap: !edit && facebookController.text.isNotEmpty ?(){
-                              print(facebookController.text);
-                              // UrlLauncherHelper().launchFacebookUrl(facebookController.text);
-                            }:(){
-                              print(facebookController.text.length);
-
-                            },
-                            child: TextFormField(
-                              enabled: edit,
-                              minLines: 1,
-                              maxLines: 2,
-                              controller: facebookController,
-                              decoration: InputDecoration(
-                                  hintText: StringResources.facebook,
-                                  // prefix: Text(StringResources.facebookBaseUrl),
-                                  hintStyle: TextStyle(
-                                    color: AppConst.chocolate,
-                                  ),
-                                  prefixIcon: FaIcon(
-                                    FontAwesomeIcons.facebookSquare,
-                                    size: sizeConfig.getSize(30),
-                                    color: AppConst.chocolate,
-                                  ),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none
-                                  )
+                          Expanded(
+                            child: Text(
+                              userData.userName??'Loading...',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: sizeConfig.getSize(22),
                               ),
                             ),
                           ),
-                          InkWell(
-                            onTap: !edit && instaController.text.isNotEmpty ?(){
-                              UrlLauncherHelper().launchInstagramUrl(instaController.text);
-                            }:(){},
-                            child: TextField(
-                              enabled: edit,
-                              minLines: 1,
-                              maxLines: 2,
-                              controller: instaController,
-                              decoration: InputDecoration(
-                                  hintText: StringResources.instagram,
-                                  hintStyle: TextStyle(
-                                    color: AppConst.chocolate,
+                          Container(
+                            height: sizeConfig.height * 100,
+                            color: AppConst.magenta,
+                            width: 4,
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: (){
+                                /*Get.dialog(Dialog(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(sizeConfig.getSize(20)),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        FlatButton(
+                                          onPressed: (){
+                                            Get.back();
+                                            Get.to(MemberCheckInHistory());
+                                          },
+                                          color: Colors.grey[300],
+                                          child: Text(
+                                              'View all'
+                                          ),
+                                          height: sizeConfig.height * 70,
+                                          minWidth: sizeConfig.width * 300,
+                                        ),
+                                        SizedBox(width: sizeConfig.width * 20,),
+                                        FlatButton(
+                                          onPressed: (){
+                                            Get.back();
+                                            Get.dialog(Dialog(child: CalenderView(),));
+                                          },
+                                          color: Colors.grey[300],
+                                          child: Text(
+                                              'View calender'
+                                          ),
+                                          height: sizeConfig.height * 70,
+                                          minWidth: sizeConfig.width * 300,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  prefixIcon: FaIcon(
-                                    FontAwesomeIcons.instagramSquare,
-                                    size: sizeConfig.getSize(30),
-                                    color: AppConst.chocolate,
+                                ));*/
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    userData.checkInData.isNull? '0':'${userDataController.userData.value.checkInData.length}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: sizeConfig.getSize(22),
+                                        color: AppConst.magenta
+                                    ),
                                   ),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none
-                                  )
+                                  Text(
+                                      StringResources.checkIn,
+                                      style: TextStyle(
+                                          fontSize: sizeConfig.getSize(18)
+                                      )
+                                  ),
+                                ],
                               ),
                             ),
                           )
                         ],
                       ),
-                    )
-                  ],
+                      Divider(
+                        color: AppConst.magenta,
+                        thickness: 4,
+                        height: sizeConfig.height * 30,
+                      ),
+                      TextField(
+                        enabled: edit,
+                        minLines: 1,
+                        maxLines: 2,
+                        controller: addressController,
+                        decoration: InputDecoration(
+                            hintText: 'Add Address',
+                            hintStyle: TextStyle(
+                              color: AppConst.chocolate,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.location_pin,
+                              size: sizeConfig.getSize(30),
+                              color: AppConst.chocolate,
+                            ),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide.none
+                            )
+                        ),
+                      ),
+                      TextField(
+                        enabled: false,
+                        minLines: 1,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                            hintText: userData.email??'Loading...',
+                            hintStyle: TextStyle(
+                              color: AppConst.chocolate,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.email_outlined,
+                              size: sizeConfig.getSize(30),
+                              color: AppConst.chocolate,
+                            ),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide.none
+                            )
+                        ),
+                      ),
+                      TextField(
+                        enabled: edit,
+                        minLines: 1,
+                        maxLines: 2,
+                        controller: phoneController,
+                        decoration: InputDecoration(
+                            hintText: 'Add Phone',
+                            hintStyle: TextStyle(
+                              color: AppConst.chocolate,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.phone_iphone_outlined,
+                              size: sizeConfig.getSize(30),
+                              color: AppConst.chocolate,
+                            ),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide.none
+                            )
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: sizeConfig.width * 30),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: !edit && facebookController.text.isNotEmpty ?(){
+                                print(facebookController.text);
+                                // UrlLauncherHelper().launchFacebookUrl(facebookController.text);
+                              }:(){
+                                print(facebookController.text.length);
+
+                              },
+                              child: TextFormField(
+                                enabled: edit,
+                                minLines: 1,
+                                maxLines: 2,
+                                controller: facebookController,
+                                decoration: InputDecoration(
+                                    hintText: StringResources.facebook,
+                                    // prefix: Text(StringResources.facebookBaseUrl),
+                                    hintStyle: TextStyle(
+                                      color: AppConst.chocolate,
+                                    ),
+                                    prefixIcon: FaIcon(
+                                      FontAwesomeIcons.facebookSquare,
+                                      size: sizeConfig.getSize(30),
+                                      color: AppConst.chocolate,
+                                    ),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none
+                                    )
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: !edit && instaController.text.isNotEmpty ?(){
+                                UrlLauncherHelper().launchInstagramUrl(instaController.text);
+                              }:(){},
+                              child: TextField(
+                                enabled: edit,
+                                minLines: 1,
+                                maxLines: 2,
+                                controller: instaController,
+                                decoration: InputDecoration(
+                                    hintText: StringResources.instagram,
+                                    hintStyle: TextStyle(
+                                      color: AppConst.chocolate,
+                                    ),
+                                    prefixIcon: FaIcon(
+                                      FontAwesomeIcons.instagramSquare,
+                                      size: sizeConfig.getSize(30),
+                                      color: AppConst.chocolate,
+                                    ),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none
+                                    )
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

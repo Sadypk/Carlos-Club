@@ -49,6 +49,17 @@ dependencies:
   permission_handler: ^5.0.1+1
 
 
+  flutter_launcher_icons: ^0.8.1
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app-icon.png"
+  ##--> REPLACE THE app-icon.png FILE IN ASSET/IMAGE AND THEN <--##
+  ##--> RUN BELOW CODE TO CHANGE THE APP ICON <--##
+  #flutter pub get
+  #flutter pub run flutter_launcher_icons:main
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

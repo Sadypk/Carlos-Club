@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/users/models/checkIn_model.dart';
 import 'package:flutter_app/users/models/group_model.dart';
 import 'package:flutter_app/users/models/user_model.dart';
@@ -38,6 +40,16 @@ class RepoGroupMembers {
   getGroupData(groupID) async {
     DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
     userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
+    String valueString = userDataController.groupData.value.theme.split('(0x')[1].split(')')[0];
+    int value = int.parse(valueString, radix: 16);
+    Color themeColor = new Color(value);
+    print(themeColor);
+    print(userDataController.groupData.value.theme);
+    try{
+      Get.changeTheme(ThemeData(primaryColor: themeColor));
+    }catch(e){
+      Get.changeTheme(ThemeData(primaryColor: AppConst.magenta));
+    }
   }
 
 

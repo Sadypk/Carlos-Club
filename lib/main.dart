@@ -30,19 +30,7 @@ class App extends StatelessWidget {
         primaryColor: AppConst.magenta,
         accentColor:  AppConst.blue,
       ),
-      home: DateTime.now().day >= 31 ? Locker() : SplashScreen(),
-    );
-  }
-}
-
-
-class Locker extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text(
-          'Testing Debug Phase has ended, please contact the developers.'
-      ),),
+      home: SplashScreen(),
     );
   }
 }

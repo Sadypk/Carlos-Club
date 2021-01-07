@@ -26,30 +26,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(()=>Scaffold(
-      body: IndexedStack(
-        children: _pages,
-        index: userDataController.tabIndex.value,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (i){
-          userDataController.tabIndex.value = i;
-        },
-        currentIndex: userDataController.tabIndex.value,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(
-                  Icons.home
-              ),
-              label: 'Home'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(
-                  Icons.person
-              ),
-              label: 'Profile'
-          ),
-        ],
+    return Obx(()=>SafeArea(
+      child: Scaffold(
+        body: IndexedStack(
+          children: _pages,
+          index: userDataController.tabIndex.value,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: (i){
+            userDataController.tabIndex.value = i;
+          },
+          currentIndex: userDataController.tabIndex.value,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(
+                    Icons.home
+                ),
+                label: 'Home'
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                    Icons.person
+                ),
+                label: 'Profile'
+            ),
+          ],
+        ),
       ),
     ));
   }

@@ -81,102 +81,104 @@ class _AdminHomeBodyState extends State<AdminHomeBody> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: (){
-              userDataController.tabIndex.value = 1;
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
-              child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+    return SafeArea(
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: GestureDetector(
+              onTap: (){
+                userDataController.tabIndex.value = 1;
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: sizeConfig.getSize(4),horizontal: sizeConfig.getSize(10)),
+                child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(userDataController.userData.value.userPhoto??StringResources.memberHomeScreenProfilePic),
+                ),
               ),
             ),
-          ),
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Welcome: ${userDataController.userData.value.userName}'),
-              userDataController.userData.value.userType == 'admin' ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  color: Colors.red,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'ADMIN',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
-                  ),
-                ),
-              ) : SizedBox()
-            ],
-          ),
-          elevation: 0,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PopupMenuButton(
-                child: Icon(Icons.exit_to_app),
-                onSelected: (bool value){
-                  if(value){
-                    Get.dialog(LogoutDialog());
-                  }else{
-                  }
-                },
-                itemBuilder: (_){
-                  return [
-                    PopupMenuItem(
-                      value: true,
-                      child: Text(
-                          'Logout'
-                      ),
-                    )
-                  ];
-                },
-              ),
-            )
-          ],
-        ),
-        body: loading ? Loader() : Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            qrScanners(),
-            Row(
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: TabBar(
-                    labelColor: AppConst.magenta,
-                    unselectedLabelColor: Colors.grey[500],
-                    labelStyle: TextStyle(
-                        fontSize: sizeConfig.getSize(18),
-                        fontWeight: FontWeight.bold
+                Text('Welcome: ${userDataController.userData.value.userName}'),
+                userDataController.userData.value.userType == 'admin' ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    color: Colors.red,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'ADMIN',
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
+                      ),
                     ),
-                    unselectedLabelStyle: TextStyle(
-                        fontSize: sizeConfig.getSize(18)
-                    ),
-                    tabs: [
-                      Tab(text: 'Present',),
-                      Tab(text: 'Absent',),
-                    ],
                   ),
-                ),
-                FlatButton.icon(
-                  color: AppConst.magenta,
-                  onPressed: addMember,
-                  icon: Icon(Icons.add),
-                  label: Text('Add'),
-                ),
-                SizedBox(width: sizeConfig.width * 20,)
+                ) : SizedBox()
               ],
             ),
-            AbsentAndPresentListScreen(),
-          ],
+            elevation: 0,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PopupMenuButton(
+                  child: Icon(Icons.exit_to_app),
+                  onSelected: (bool value){
+                    if(value){
+                      Get.dialog(LogoutDialog());
+                    }else{
+                    }
+                  },
+                  itemBuilder: (_){
+                    return [
+                      PopupMenuItem(
+                        value: true,
+                        child: Text(
+                            'Logout'
+                        ),
+                      )
+                    ];
+                  },
+                ),
+              )
+            ],
+          ),
+          body: loading ? Loader() : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              qrScanners(),
+              Row(
+                children: [
+                  Expanded(
+                    child: TabBar(
+                      labelColor: AppConst.magenta,
+                      unselectedLabelColor: Colors.grey[500],
+                      labelStyle: TextStyle(
+                          fontSize: sizeConfig.getSize(18),
+                          fontWeight: FontWeight.bold
+                      ),
+                      unselectedLabelStyle: TextStyle(
+                          fontSize: sizeConfig.getSize(18)
+                      ),
+                      tabs: [
+                        Tab(text: 'Present',),
+                        Tab(text: 'Absent',),
+                      ],
+                    ),
+                  ),
+                  FlatButton.icon(
+                    color: AppConst.magenta,
+                    onPressed: addMember,
+                    icon: Icon(Icons.add),
+                    label: Text('Add'),
+                  ),
+                  SizedBox(width: sizeConfig.width * 20,)
+                ],
+              ),
+              AbsentAndPresentListScreen(),
+            ],
+          ),
         ),
       ),
     );

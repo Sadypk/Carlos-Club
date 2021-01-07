@@ -58,7 +58,16 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: FlutterLogo(size: 300,)
+        child: Container(
+          height: 300,
+          width: 300,
+          child: Image.asset(
+            /// Just replace the logo.png in the assets/image folder and
+            /// loading screen logo will automatically change
+            /// for app icon follow the instruction in the pubspec.yaml file
+            'assets/images/logo.png'
+          ),
+        )
       ),
     );
   }

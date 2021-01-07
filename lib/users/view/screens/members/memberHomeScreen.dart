@@ -23,30 +23,32 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx((){
-      return Scaffold(
-        body: IndexedStack(
-          children: _pages,
-          index: userDataController.tabIndex.value,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: (i){
-            userDataController.tabIndex.value = i;
-          },
-          currentIndex: userDataController.tabIndex.value,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                    Icons.home
-                ),
-                label: 'Home'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(
-                    Icons.person
-                ),
-                label: 'Profile'
-            ),
-          ],
+      return SafeArea(
+        child: Scaffold(
+          body: IndexedStack(
+            children: _pages,
+            index: userDataController.tabIndex.value,
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (i){
+              userDataController.tabIndex.value = i;
+            },
+            currentIndex: userDataController.tabIndex.value,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(
+                      Icons.home
+                  ),
+                  label: 'Home'
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                      Icons.person
+                  ),
+                  label: 'Profile'
+              ),
+            ],
+          ),
         ),
       );
     });

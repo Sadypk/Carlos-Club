@@ -101,9 +101,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget header() {
     return Container(
-      height: sizeConfig.height * 300,
+      height: sizeConfig.height * 200,
       // color: Colors.red,
-      child: FlutterLogo(size: sizeConfig.width * 300,),
+      child: Container(
+        height: sizeConfig.width * 300,
+        width: sizeConfig.width * 300,
+        child: Image.asset('assets/images/logo.png'),
+      ),
     );
   }
 
