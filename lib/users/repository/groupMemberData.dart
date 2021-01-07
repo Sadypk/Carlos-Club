@@ -40,12 +40,10 @@ class RepoGroupMembers {
   getGroupData(groupID) async {
     DocumentSnapshot documentSnapshot = await group.doc(groupID).get();
     userDataController.groupData.value = GroupModel.fromJson(documentSnapshot.data());
-    String valueString = userDataController.groupData.value.theme.split('(0x')[1].split(')')[0];
-    int value = int.parse(valueString, radix: 16);
-    Color themeColor = new Color(value);
-    print(themeColor);
-    print(userDataController.groupData.value.theme);
     try{
+      String valueString = userDataController.groupData.value.theme.split('(0x')[1].split(')')[0];
+      int value = int.parse(valueString, radix: 16);
+      Color themeColor = new Color(value);
       Get.changeTheme(ThemeData(primaryColor: themeColor));
     }catch(e){
       Get.changeTheme(ThemeData(primaryColor: AppConst.magenta));

@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_app/authentication/models/login_error_model.dart';
 import 'package:flutter_app/authentication/view/login_page.dart';
+import 'package:flutter_app/main_app/resources/app_const.dart';
 import 'package:flutter_app/users/models/user_model.dart';
 import 'package:flutter_app/users/repository/groupMemberData.dart';
 import 'package:flutter_app/users/repository/user_profile_data_repository.dart';
@@ -195,6 +197,7 @@ class AuthRepository extends GetxController {
 
   signOut() async {
     try {
+      Get.changeTheme(ThemeData(primaryColor: AppConst.magenta));
       if (_googleSignIn.currentUser != null) {
         _googleSignIn.signOut();
       }else if(_facebookSignIn.isLoggedIn != null){
